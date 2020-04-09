@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_08_212452) do
+ActiveRecord::Schema.define(version: 2020_04_09_164746) do
 
   create_table "account_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "code", limit: 10, null: false
@@ -25,6 +25,21 @@ ActiveRecord::Schema.define(version: 2020_04_08_212452) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["code"], name: "index_account_types_on_code", unique: true
+    t.index ["internal_admin_type", "internal_application_type", "ordering_party_type", "courier_type", "supplier_type"], name: "account_types_type_uk", unique: true
+  end
+
+  create_table "device_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "code", limit: 10, null: false
+    t.string "name", limit: 150, null: false
+    t.boolean "internal_api_server_type", default: false
+    t.boolean "internal_web_server_type", default: false
+    t.boolean "desktop_type", default: false
+    t.boolean "web_server_type", default: false
+    t.boolean "mobile_type", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_device_types_on_code", unique: true
+    t.index ["internal_api_server_type", "internal_web_server_type", "desktop_type", "web_server_type", "mobile_type"], name: "device_types_type_uk", unique: true
   end
 
   create_table "user_accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
