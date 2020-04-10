@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_09_164746) do
+ActiveRecord::Schema.define(version: 2020_04_10_172752) do
 
   create_table "account_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "code", limit: 10, null: false
@@ -28,6 +28,44 @@ ActiveRecord::Schema.define(version: 2020_04_09_164746) do
     t.index ["internal_admin_type", "internal_application_type", "ordering_party_type", "courier_type", "supplier_type"], name: "account_types_type_uk", unique: true
   end
 
+  create_table "addresses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "street", limit: 150, null: false
+    t.string "city_arrea_or_district", limit: 150
+    t.string "city_or_town_or_village", limit: 150, null: false
+    t.string "county", limit: 150
+    t.string "postal_code_and_name", limit: 150, null: false
+    t.string "country", limit: 150
+    t.string "addressable_type"
+    t.bigint "addressable_id"
+    t.string "addressable_from_type"
+    t.bigint "addressable_from_id"
+    t.string "addressable_to_type"
+    t.bigint "addressable_to_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["addressable_from_type", "addressable_from_id"], name: "index_addresses_on_addressable_from_type_and_addressable_from_id"
+    t.index ["addressable_to_type", "addressable_to_id"], name: "index_addresses_on_addressable_to_type_and_addressable_to_id"
+    t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable_type_and_addressable_id"
+  end
+
+  create_table "deliveries", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "uuid", limit: 36, null: false
+    t.string "email", limit: 254, null: false
+    t.decimal "amount_on_delivery", precision: 15, scale: 2
+    t.string "orderer_name", limit: 150, null: false
+    t.string "orderer_email", limit: 254, null: false
+    t.bigint "orderer_id"
+    t.bigint "supplier_id", null: false
+    t.bigint "courier_id", null: false
+    t.text "annotation"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["courier_id"], name: "index_deliveries_on_courier_id"
+    t.index ["orderer_id"], name: "index_deliveries_on_orderer_id"
+    t.index ["supplier_id"], name: "index_deliveries_on_supplier_id"
+    t.index ["uuid"], name: "index_deliveries_on_uuid", unique: true
+  end
+
   create_table "device_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "code", limit: 10, null: false
     t.string "name", limit: 150, null: false
@@ -40,6 +78,33 @@ ActiveRecord::Schema.define(version: 2020_04_09_164746) do
     t.datetime "updated_at", null: false
     t.index ["code"], name: "index_device_types_on_code", unique: true
     t.index ["internal_api_server_type", "internal_web_server_type", "desktop_type", "web_server_type", "mobile_type"], name: "device_types_type_uk", unique: true
+  end
+
+  create_table "devices", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "uuid", limit: 36, null: false
+    t.string "name", limit: 150, null: false
+    t.bigint "user_id", null: false
+    t.bigint "device_type_id", null: false
+    t.boolean "device_active", default: false
+    t.boolean "device_locked", default: false
+    t.boolean "device_confirmed", default: false
+    t.string "confirm_token", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["confirm_token"], name: "index_devices_on_confirm_token", unique: true
+    t.index ["device_type_id"], name: "index_devices_on_device_type_id"
+    t.index ["user_id"], name: "index_devices_on_user_id"
+    t.index ["uuid"], name: "index_devices_on_uuid", unique: true
+  end
+
+  create_table "gps_locations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.float "gps_latitude", null: false
+    t.float "gps_longitude", null: false
+    t.string "locatable_type", null: false
+    t.bigint "locatable_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["locatable_type", "locatable_id"], name: "index_gps_locations_on_locatable_type_and_locatable_id"
   end
 
   create_table "user_accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -73,6 +138,11 @@ ActiveRecord::Schema.define(version: 2020_04_09_164746) do
     t.index ["uuid"], name: "index_users_on_uuid", unique: true
   end
 
+  add_foreign_key "deliveries", "users", column: "courier_id"
+  add_foreign_key "deliveries", "users", column: "orderer_id"
+  add_foreign_key "deliveries", "users", column: "supplier_id"
+  add_foreign_key "devices", "device_types"
+  add_foreign_key "devices", "users"
   add_foreign_key "user_accounts", "account_types"
   add_foreign_key "user_accounts", "users"
 end
