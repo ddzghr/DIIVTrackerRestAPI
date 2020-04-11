@@ -8,8 +8,6 @@ class CreateAddresses < ActiveRecord::Migration[5.2]
       t.string :postal_code_and_name, limit: 150, null: false
       t.string :country, limit: 150
       t.references :addressable, polymorphic: true, index: true, null: true
-      t.references :addressable_from, polymorphic: true, index: true, null: true
-      t.references :addressable_to, polymorphic: true, index: true, null: true
 
       t.timestamps
     end
