@@ -6,9 +6,9 @@ class CreateUsers < ActiveRecord::Migration[5.2]
       t.string :email, limit: 254, null: false
       t.string :password_digest, null: false
       t.string :company_name, limit: 150, null: true
-      t.boolean :user_active, default: false
-      t.boolean :user_locked, default: false
-      t.boolean :email_confirmed, default: false
+      t.boolean :user_active, default: false, null: false
+      t.boolean :user_locked, default: false, null: false
+      t.boolean :email_confirmed, default: false, null: false
       t.string :confirm_token, null: false
       t.string :password_reset_token, null: false
 

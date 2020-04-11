@@ -5,11 +5,11 @@ class CreateDeviceTypes < ActiveRecord::Migration[5.2]
     create_table :device_types do |t|
       t.string :code, limit: 10, null: false
       t.string :name, limit: 150, null: false
-      t.boolean :internal_api_server_type, default: false
-      t.boolean :internal_web_server_type, default: false
-      t.boolean :desktop_type, default: false
-      t.boolean :web_server_type, default: false
-      t.boolean :mobile_type, default: false
+      t.boolean :internal_api_server_type, default: false, null: false
+      t.boolean :internal_web_server_type, default: false, null: false
+      t.boolean :desktop_type, default: false, null: false
+      t.boolean :web_server_type, default: false, null: false
+      t.boolean :mobile_type, default: false, null: false
 
       t.timestamps
     end

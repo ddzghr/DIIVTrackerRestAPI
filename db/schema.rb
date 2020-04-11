@@ -10,18 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_11_080703) do
+ActiveRecord::Schema.define(version: 2020_04_11_151816) do
 
   create_table "account_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "code", limit: 10, null: false
     t.string "name", limit: 150, null: false
-    t.boolean "internal_admin_type", default: false
-    t.boolean "internal_application_type", default: false
-    t.boolean "ordering_party_type", default: false
-    t.boolean "courier_type", default: false
-    t.boolean "supplier_type", default: false
-    t.boolean "has_duration", default: false
-    t.boolean "has_invoice", default: false
+    t.boolean "internal_admin_type", default: false, null: false
+    t.boolean "internal_application_type", default: false, null: false
+    t.boolean "ordering_party_type", default: false, null: false
+    t.boolean "courier_type", default: false, null: false
+    t.boolean "supplier_type", default: false, null: false
+    t.boolean "has_duration", default: false, null: false
+    t.boolean "has_invoice", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["code"], name: "index_account_types_on_code", unique: true
@@ -42,6 +42,16 @@ ActiveRecord::Schema.define(version: 2020_04_11_080703) do
     t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable_type_and_addressable_id"
   end
 
+  create_table "contacts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "name", limit: 150
+    t.string "phone", limit: 50
+    t.string "contactable_type"
+    t.bigint "contactable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["contactable_type", "contactable_id"], name: "index_contacts_on_contactable_type_and_contactable_id"
+  end
+
   create_table "deliveries", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "uuid", limit: 36, null: false
     t.string "email", limit: 254, null: false
@@ -60,14 +70,28 @@ ActiveRecord::Schema.define(version: 2020_04_11_080703) do
     t.index ["uuid"], name: "index_deliveries_on_uuid", unique: true
   end
 
+  create_table "delivery_statuses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "delivery_id", null: false
+    t.bigint "status_id", null: false
+    t.bigint "device_id", null: false
+    t.datetime "local_datetime", null: false
+    t.bigint "assigned_device_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assigned_device_id"], name: "index_delivery_statuses_on_assigned_device_id"
+    t.index ["delivery_id"], name: "index_delivery_statuses_on_delivery_id"
+    t.index ["device_id"], name: "index_delivery_statuses_on_device_id"
+    t.index ["status_id"], name: "index_delivery_statuses_on_status_id"
+  end
+
   create_table "device_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "code", limit: 10, null: false
     t.string "name", limit: 150, null: false
-    t.boolean "internal_api_server_type", default: false
-    t.boolean "internal_web_server_type", default: false
-    t.boolean "desktop_type", default: false
-    t.boolean "web_server_type", default: false
-    t.boolean "mobile_type", default: false
+    t.boolean "internal_api_server_type", default: false, null: false
+    t.boolean "internal_web_server_type", default: false, null: false
+    t.boolean "desktop_type", default: false, null: false
+    t.boolean "web_server_type", default: false, null: false
+    t.boolean "mobile_type", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["code"], name: "index_device_types_on_code", unique: true
@@ -79,10 +103,13 @@ ActiveRecord::Schema.define(version: 2020_04_11_080703) do
     t.string "name", limit: 150, null: false
     t.bigint "user_id", null: false
     t.bigint "device_type_id", null: false
-    t.boolean "device_active", default: false
-    t.boolean "device_locked", default: false
-    t.boolean "device_confirmed", default: false
+    t.date "valid_from"
+    t.date "valid_through"
+    t.boolean "device_active", default: false, null: false
+    t.boolean "device_confirmed", default: false, null: false
     t.string "confirm_token", null: false
+    t.boolean "device_locked", default: false, null: false
+    t.string "unlock_token", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["confirm_token"], name: "index_devices_on_confirm_token", unique: true
@@ -106,6 +133,20 @@ ActiveRecord::Schema.define(version: 2020_04_11_080703) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["locatable_type", "locatable_id"], name: "index_gps_locations_on_locatable_type_and_locatable_id"
+  end
+
+  create_table "statuses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "code", limit: 10, null: false
+    t.string "name", limit: 50, null: false
+    t.boolean "new_type_status", default: false, null: false
+    t.boolean "in_progress_type_status", default: false, null: false
+    t.boolean "stored_type_status", default: false, null: false
+    t.boolean "delivered_type_status", default: false, null: false
+    t.bigint "status_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_statuses_on_code", unique: true
+    t.index ["status_id"], name: "index_statuses_on_status_id"
   end
 
   create_table "to_addresses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -133,9 +174,9 @@ ActiveRecord::Schema.define(version: 2020_04_11_080703) do
     t.string "email", limit: 254, null: false
     t.string "password_digest", null: false
     t.string "company_name", limit: 150
-    t.boolean "user_active", default: false
-    t.boolean "user_locked", default: false
-    t.boolean "email_confirmed", default: false
+    t.boolean "user_active", default: false, null: false
+    t.boolean "user_locked", default: false, null: false
+    t.boolean "email_confirmed", default: false, null: false
     t.string "confirm_token", null: false
     t.string "password_reset_token", null: false
     t.datetime "created_at", null: false
@@ -146,13 +187,33 @@ ActiveRecord::Schema.define(version: 2020_04_11_080703) do
     t.index ["uuid"], name: "index_users_on_uuid", unique: true
   end
 
+  create_table "workflows", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "old_status_id", null: false
+    t.bigint "new_status_id", null: false
+    t.bigint "device_type_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["device_type_id"], name: "index_workflows_on_device_type_id"
+    t.index ["new_status_id"], name: "index_workflows_on_new_status_id"
+    t.index ["old_status_id", "new_status_id", "device_type_id"], name: "workflow_uk", unique: true
+    t.index ["old_status_id"], name: "index_workflows_on_old_status_id"
+  end
+
   add_foreign_key "deliveries", "users", column: "courier_id"
   add_foreign_key "deliveries", "users", column: "orderer_id"
   add_foreign_key "deliveries", "users", column: "supplier_id"
+  add_foreign_key "delivery_statuses", "deliveries"
+  add_foreign_key "delivery_statuses", "devices"
+  add_foreign_key "delivery_statuses", "devices", column: "assigned_device_id"
+  add_foreign_key "delivery_statuses", "statuses"
   add_foreign_key "devices", "device_types"
   add_foreign_key "devices", "users"
   add_foreign_key "from_addresses", "deliveries"
+  add_foreign_key "statuses", "statuses"
   add_foreign_key "to_addresses", "deliveries"
   add_foreign_key "user_accounts", "account_types"
   add_foreign_key "user_accounts", "users"
+  add_foreign_key "workflows", "device_types"
+  add_foreign_key "workflows", "statuses", column: "new_status_id"
+  add_foreign_key "workflows", "statuses", column: "old_status_id"
 end
