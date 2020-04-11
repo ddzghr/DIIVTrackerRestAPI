@@ -137,7 +137,7 @@ ActiveRecord::Schema.define(version: 2020_04_11_151816) do
 
   create_table "statuses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "code", limit: 10, null: false
-    t.string "name", limit: 50, null: false
+    t.string "name", limit: 75, null: false
     t.boolean "new_type_status", default: false, null: false
     t.boolean "in_progress_type_status", default: false, null: false
     t.boolean "stored_type_status", default: false, null: false
