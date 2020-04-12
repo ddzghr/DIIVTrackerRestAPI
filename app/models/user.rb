@@ -16,4 +16,8 @@ class User < ApplicationRecord
   has_many :couriered_deliveries,
            class_name: 'Delivery',
            foreign_key: 'courier_id'
+
+  validates_presence_of :uuid, :name, :email, :password_digest, :user_active,
+                        :user_locked, :email_confirmed, :confirm_token,
+                        :password_reset_token, :created_at, :updated_at
 end

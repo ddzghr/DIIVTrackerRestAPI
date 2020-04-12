@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_11_151816) do
+ActiveRecord::Schema.define(version: 2020_04_12_113419) do
+
+  create_table "account_type_device_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "account_type_id", null: false
+    t.bigint "device_type_id", null: false
+    t.boolean "applicable", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_type_id", "device_type_id"], name: "account_type_device_types_uk", unique: true
+    t.index ["account_type_id"], name: "index_account_type_device_types_on_account_type_id"
+    t.index ["device_type_id"], name: "index_account_type_device_types_on_device_type_id"
+  end
 
   create_table "account_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "code", limit: 10, null: false
@@ -26,6 +37,14 @@ ActiveRecord::Schema.define(version: 2020_04_11_151816) do
     t.datetime "updated_at", null: false
     t.index ["code"], name: "index_account_types_on_code", unique: true
     t.index ["internal_admin_type", "internal_application_type", "ordering_party_type", "courier_type", "supplier_type"], name: "account_types_type_uk", unique: true
+  end
+
+  create_table "address_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "code", limit: 10, null: false
+    t.string "name", limit: 50, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_address_types_on_code", unique: true
   end
 
   create_table "addresses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -68,6 +87,15 @@ ActiveRecord::Schema.define(version: 2020_04_11_151816) do
     t.index ["orderer_id"], name: "index_deliveries_on_orderer_id"
     t.index ["supplier_id"], name: "index_deliveries_on_supplier_id"
     t.index ["uuid"], name: "index_deliveries_on_uuid", unique: true
+  end
+
+  create_table "delivery_addresses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "delivery_id", null: false
+    t.bigint "address_types_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["address_types_id"], name: "index_delivery_addresses_on_address_types_id"
+    t.index ["delivery_id"], name: "index_delivery_addresses_on_delivery_id"
   end
 
   create_table "delivery_statuses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -118,13 +146,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_151816) do
     t.index ["uuid"], name: "index_devices_on_uuid", unique: true
   end
 
-  create_table "from_addresses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.bigint "delivery_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["delivery_id"], name: "index_from_addresses_on_delivery_id", unique: true
-  end
-
   create_table "gps_locations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.float "gps_latitude", null: false
     t.float "gps_longitude", null: false
@@ -149,11 +170,16 @@ ActiveRecord::Schema.define(version: 2020_04_11_151816) do
     t.index ["status_id"], name: "index_statuses_on_status_id"
   end
 
-  create_table "to_addresses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.bigint "delivery_id", null: false
+  create_table "user_account_devices", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "user_account_id", null: false
+    t.bigint "device_id", null: false
+    t.bigint "account_type_device_type_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["delivery_id"], name: "index_to_addresses_on_delivery_id", unique: true
+    t.index ["account_type_device_type_id"], name: "index_user_account_devices_on_account_type_device_type_id"
+    t.index ["device_id"], name: "index_user_account_devices_on_device_id"
+    t.index ["user_account_id", "device_id"], name: "user_account_devices_uk", unique: true
+    t.index ["user_account_id"], name: "index_user_account_devices_on_user_account_id"
   end
 
   create_table "user_accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -199,18 +225,23 @@ ActiveRecord::Schema.define(version: 2020_04_11_151816) do
     t.index ["old_status_id"], name: "index_workflows_on_old_status_id"
   end
 
+  add_foreign_key "account_type_device_types", "account_types"
+  add_foreign_key "account_type_device_types", "device_types"
   add_foreign_key "deliveries", "users", column: "courier_id"
   add_foreign_key "deliveries", "users", column: "orderer_id"
   add_foreign_key "deliveries", "users", column: "supplier_id"
+  add_foreign_key "delivery_addresses", "address_types", column: "address_types_id"
+  add_foreign_key "delivery_addresses", "deliveries"
   add_foreign_key "delivery_statuses", "deliveries"
   add_foreign_key "delivery_statuses", "devices"
   add_foreign_key "delivery_statuses", "devices", column: "assigned_device_id"
   add_foreign_key "delivery_statuses", "statuses"
   add_foreign_key "devices", "device_types"
   add_foreign_key "devices", "users"
-  add_foreign_key "from_addresses", "deliveries"
   add_foreign_key "statuses", "statuses"
-  add_foreign_key "to_addresses", "deliveries"
+  add_foreign_key "user_account_devices", "account_type_device_types"
+  add_foreign_key "user_account_devices", "devices"
+  add_foreign_key "user_account_devices", "user_accounts"
   add_foreign_key "user_accounts", "account_types"
   add_foreign_key "user_accounts", "users"
   add_foreign_key "workflows", "device_types"
