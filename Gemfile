@@ -29,13 +29,13 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # gem 'rack-cors'
 
 # mmy gems
+gem 'active_model_serializers', '~> 0.10.0'
 gem 'activesupport'
 gem 'jwt'
-gem 'simple_command'
-gem 'active_model_serializers', '~> 0.10.0'
-gem 'will_paginate', '~> 3.1.0'
 gem 'rswag'
 gem 'seedbank'
+gem 'simple_command'
+gem 'will_paginate', '~> 3.1.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -47,10 +47,10 @@ group :development do
 end
 
 group :test do
-  gem 'factory_bot_rails', '~> 4.0'
-  gem 'shoulda-matchers', '~> 3.1'
-  gem 'faker'
   gem 'database_cleaner'
+  gem 'factory_bot_rails', '~> 4.0'
+  gem 'faker'
+  gem 'shoulda-matchers', '~> 3.1'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
