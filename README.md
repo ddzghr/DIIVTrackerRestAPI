@@ -41,9 +41,13 @@ Things you may want to cover:
 
 ######System sub-zone
 
+    http://api.diivtracker.com/api/v1/diiv/system/users/{e-mail}
+    
     http://api.diivtracker.com/api/v1/diiv/system/account-types
     
     http://api.diivtracker.com/api/v1/diiv/system/device-types
+    
+    http://api.diivtracker.com/api/v1/diiv/system/account-type-device-types
                         
     http://api.diivtracker.com/api/v1/diiv/system/statuses
     
@@ -99,8 +103,8 @@ Things you may want to cover:
     
 ######Administrator sub-zone
     
-    http://api.diivtracker.com/api/v1/diiv/admin/users
-    
+    http://api.diivtracker.com/api/v1/diiv/admin/users    
+        
     http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}
     
     http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/accounts

@@ -16,7 +16,7 @@ DeviceType.create(code: 'DIIVWEBSER',
                   mobile_type: false)
 
 DeviceType.create(code: 'CLIDESKTOP',
-                  name: 'DIIVTracker WEB Server',
+                  name: 'Client desktop application',
                   internal_api_server_type: false,
                   internal_web_server_type: false,
                   desktop_type: true,

@@ -1,4 +1,5 @@
 class Delivery < ApplicationRecord
+  has_uuid
   belongs_to :orderer, class_name: 'User'
   belongs_to :supplier, class_name: 'User'
   belongs_to :courier, class_name: 'User'

@@ -1,7 +1,6 @@
 # spec/factories/users.rb
 FactoryBot.define do
   factory :user do
-    uuid { Faker::Internet.uuid}
     name { Faker::Name.name }
     email { Faker::Internet.email }
     password {Faker::Internet.password }

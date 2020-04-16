@@ -183,6 +183,7 @@ ActiveRecord::Schema.define(version: 2020_04_12_113419) do
   end
 
   create_table "user_accounts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "uuid", limit: 36, null: false
     t.bigint "user_id", null: false
     t.bigint "account_type_id", null: false
     t.string "invoice", limit: 36

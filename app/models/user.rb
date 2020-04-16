@@ -1,9 +1,9 @@
 # frozen_string_literal: true
-
 class User < ApplicationRecord
   has_secure_token :confirm_token
   has_secure_token :password_reset_token
   has_secure_password
+  has_uuid
   has_one :address, as: :addressable
   has_many :user_accounts
   has_many :account_types, through: :user_accounts
