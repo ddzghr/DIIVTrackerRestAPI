@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class CreateAccountTypes < ActiveRecord::Migration[5.2]
+class CreateRoleTypes < ActiveRecord::Migration[5.2]
   def change
-    create_table :account_types do |t|
+    create_table :role_types do |t|
       t.string :code, limit: 10, null: false
       t.string :name, limit: 150, null: false
       t.boolean :internal_admin_type, default: false, null: false
@@ -15,13 +15,13 @@ class CreateAccountTypes < ActiveRecord::Migration[5.2]
 
       t.timestamps null: false
     end
-    add_index :account_types, :code, unique: true
-    add_index :account_types, %i[internal_admin_type
-                                 internal_application_type
-                                 ordering_party_type
-                                 courier_type
-                                 supplier_type],
+    add_index :role_types, :code, unique: true
+    add_index :role_types, %i[internal_admin_type
+                             internal_application_type
+                             ordering_party_type
+                             courier_type
+                             supplier_type],
               unique: true,
-              name: 'account_types_type_uk'
+              name: 'role_types_type_uk'
   end
 end

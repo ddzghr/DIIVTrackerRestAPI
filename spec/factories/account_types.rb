@@ -1,6 +1,6 @@
-# spec/factories/account_types.rb
+# spec/factories/role_types.rb
 FactoryBot.define do
-  factory :account_type do
+  factory :role_type do
     code { Faker::Lorem.characters[0..9].upcase }
     name { Faker::Lorem.words(number: 5).join(' ').capitalize }
     internal_admin_type { Faker::Boolean }

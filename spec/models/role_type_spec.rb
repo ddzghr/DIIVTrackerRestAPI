@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe AccountType, type: :model do
-  subject { build(:account_type) }
+RSpec.describe RoleType, type: :model do
+  subject { build(:role_type) }
 
   it "is valid with valid attributes" do
     expect(subject).to be_valid

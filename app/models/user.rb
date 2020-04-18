@@ -5,8 +5,8 @@ class User < ApplicationRecord
   has_secure_password
   has_uuid
   has_one :address, as: :addressable
-  has_many :user_accounts
-  has_many :account_types, through: :user_accounts
+  has_many :user_roles
+  has_many :role_types, through: :user_roles
   has_many :ordered_deliveries,
            class_name: 'Delivery',
            foreign_key: 'orderer_id'
@@ -17,7 +17,7 @@ class User < ApplicationRecord
            class_name: 'Delivery',
            foreign_key: 'courier_id'
 
-  validates_presence_of :uuid, :name, :email, :password_digest, :user_active,
+  validates_presence_of :name, :email, :password_digest, :user_active,
                         :user_locked, :email_confirmed, :confirm_token,
                         :password_reset_token, :created_at, :updated_at
 end

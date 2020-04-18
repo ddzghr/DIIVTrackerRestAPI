@@ -31,7 +31,7 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # mmy gems
 gem 'active_model_serializers', '~> 0.10.0'
 gem 'activesupport'
-gem 'has_secure_token'
+#gem 'has_secure_token'
 gem 'jwt'
 gem 'rswag'
 gem 'seedbank'

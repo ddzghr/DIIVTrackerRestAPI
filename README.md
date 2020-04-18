@@ -43,11 +43,11 @@ Things you may want to cover:
 
     http://api.diivtracker.com/api/v1/diiv/system/users/{e-mail}
     
-    http://api.diivtracker.com/api/v1/diiv/system/account-types
+    http://api.diivtracker.com/api/v1/diiv/system/role-types
     
     http://api.diivtracker.com/api/v1/diiv/system/device-types
     
-    http://api.diivtracker.com/api/v1/diiv/system/account-type-device-types
+    http://api.diivtracker.com/api/v1/diiv/system/role-type-device-types
                         
     http://api.diivtracker.com/api/v1/diiv/system/statuses
     
@@ -59,13 +59,13 @@ Things you may want to cover:
     
     http://api.diivtracker.com/api/v1/diiv/client/{uuid}/validate
     
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/accounts
+    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/roles
     
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/accounts/{uuid}
+    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/roles/{uuid}
     
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/accounts/{uuid}/devices
+    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/roles/{uuid}/devices
     
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/accounts/{uuid}/devices/{uuid}
+    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/roles/{uuid}/devices/{uuid}
     
     http://api.diivtracker.com/api/v1/diiv/client/{uuid}/devices
     
@@ -75,9 +75,9 @@ Things you may want to cover:
     
     http://api.diivtracker.com/api/v1/diiv/client/{uuid}/devices/{uuid}/locations
     
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/devices/{uuid}/accounts
+    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/devices/{uuid}/roles
     
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/devices/{uuid}/accounts/{uuid}
+    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/devices/{uuid}/roles/{uuid}
     
     http://api.diivtracker.com/api/v1/diiv/client/{uuid}/deliveries
     
@@ -107,19 +107,19 @@ Things you may want to cover:
         
     http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}
     
-    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/accounts
+    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/roles
     
-    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/accounts/{uuid}
+    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/roles/{uuid}
     
-    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/accounts/{uuid}/devices
+    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/roles/{uuid}/devices
     
-    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/accounts/{uuid}/devices/{uuid}
+    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/roles/{uuid}/devices/{uuid}
     
     http://api.diivtracker.com/api/v1/diiv/admin/devices
     
-    http://api.diivtracker.com/api/v1/diiv/admin/devices/{uuid}/accounts
+    http://api.diivtracker.com/api/v1/diiv/admin/devices/{uuid}/roles
     
-    http://api.diivtracker.com/api/v1/diiv/admin/devices/{uuid}/accounts/{uuid}
+    http://api.diivtracker.com/api/v1/diiv/admin/devices/{uuid}/roles/{uuid}
     
     http://api.diivtracker.com/api/v1/diiv/admin/devices/{uuid}/locations
     

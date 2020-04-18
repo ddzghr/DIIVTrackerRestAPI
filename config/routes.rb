@@ -4,11 +4,8 @@ Rails.application.routes.draw do
     scope module: 'v1' do
       scope '/api/v1' do
         scope '/diiv' do
-          scope '/admin' do
-            resources :probas
-          end
-          scope '/free' do
-            resources :probas, only: [:index, :show]
+          scope '/system' do
+            resources :address_types, :path => '/address-types'
           end
         end
       end

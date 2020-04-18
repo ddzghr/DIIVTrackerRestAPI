@@ -7,12 +7,12 @@ RSpec.describe User, type: :model do
     expect(subject).to be_valid
   end
 
-  it "is not valid without a uuid" do
+  it "is valid without an uuid because it is generated if none is given" do
     replica = subject.clone
     replica.uuid = nil
-    expect(replica).to_not be_valid
+    replica.save
+    expect(replica.uuid?).to be true
   end
-  it { should validate_presence_of(:uuid) }
 
   it "is not valid without a name" do
     replica = subject.clone

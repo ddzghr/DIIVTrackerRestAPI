@@ -71,8 +71,6 @@ GEM
       i18n (>= 1.6, < 2)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    has_secure_token (1.0.0)
-      activerecord (>= 3.0)
     i18n (1.8.2)
       concurrent-ruby (~> 1.0)
     json-schema (2.8.1)
@@ -191,7 +189,6 @@ DEPENDENCIES
   database_cleaner
   factory_bot_rails (~> 4.0)
   faker
-  has_secure_token
   jwt
   mysql2 (>= 0.4.4, < 0.6.0)
   puma (~> 3.11)
