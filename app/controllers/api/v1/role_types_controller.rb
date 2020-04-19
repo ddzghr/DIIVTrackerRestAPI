@@ -1,6 +1,5 @@
+# app/controllers/api/v1/role_types_controller.rb
 # frozen_string_literal: true
-
-#  app/controllers/api/v1/role_types_controller.rb
 module Api
   module V1
     class RoleTypesController < ApplicationController
@@ -52,7 +51,7 @@ module Api
 
       # Only allow a trusted parameter "white list" through.
       def role_type_params
-        params.fetch(:role_type, {}).permit(:code, :name,
+        params.require(:role_type).permit(:code, :name,
                                             :internal_admin_type,
                                             :internal_application_type,
                                             :ordering_party_type,

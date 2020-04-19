@@ -1,4 +1,5 @@
-#  app/controllers/api/v1/address_types_controller.rb
+# app/controllers/api/v1/address_types_controller.rb
+# frozen_string_literal: true
 module Api
   module V1
     class AddressTypesController < ApplicationController
@@ -49,7 +50,7 @@ module Api
 
       # Only allow a trusted parameter "white list" through.
       def address_type_params
-        params.fetch(:address_type, {}).permit(:code, :name)
+        params.require(:address_type).permit(:code, :name)
       end
     end
   end
