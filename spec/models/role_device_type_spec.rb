@@ -1,5 +1,5 @@
 require 'rails_helper'
 
-RSpec.describe RoleTypeDeviceType, type: :model do
+RSpec.describe RoleDeviceType, type: :model do
   pending "add some examples to (or delete) #{__FILE__}"
 end

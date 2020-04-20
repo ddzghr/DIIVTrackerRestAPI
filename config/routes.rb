@@ -6,9 +6,9 @@ Rails.application.routes.draw do
         scope '/diiv' do
           scope '/system' do
             resources :address_types, :path => '/address-types'
-            resources :role_types, :path => '/role-types'
+            resources :roles, :path => '/roles'
             resources :device_types, :path => '/device-types'
-            resources :role_type_device_types, :path => '/role-types-device-types'
+            resources :role_device_types, :path => '/roles-device-types'
           end
         end
       end

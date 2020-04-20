@@ -6,7 +6,7 @@ class User < ApplicationRecord
   has_uuid
   has_one :address, as: :addressable
   has_many :user_roles
-  has_many :role_types, through: :user_roles
+  has_many :roles, through: :user_roles
   has_many :ordered_deliveries,
            class_name: 'Delivery',
            foreign_key: 'orderer_id'

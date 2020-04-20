@@ -129,18 +129,18 @@ ActiveRecord::Schema.define(version: 2020_04_12_112849) do
     t.index ["locatable_type", "locatable_id"], name: "index_gps_locations_on_locatable_type_and_locatable_id"
   end
 
-  create_table "role_type_device_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.bigint "role_type_id", null: false
+  create_table "role_device_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.bigint "role_id", null: false
     t.bigint "device_type_id", null: false
     t.boolean "applicable", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["device_type_id"], name: "index_role_type_device_types_on_device_type_id"
-    t.index ["role_type_id", "device_type_id"], name: "role_type_device_types_uk", unique: true
-    t.index ["role_type_id"], name: "index_role_type_device_types_on_role_type_id"
+    t.index ["device_type_id"], name: "index_role_device_types_on_device_type_id"
+    t.index ["role_id", "device_type_id"], name: "role_device_types_uk", unique: true
+    t.index ["role_id"], name: "index_role_device_types_on_role_id"
   end
 
-  create_table "role_types", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "roles", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "code", limit: 10, null: false
     t.string "name", limit: 150, null: false
     t.boolean "internal_admin_type", default: false, null: false
@@ -152,8 +152,8 @@ ActiveRecord::Schema.define(version: 2020_04_12_112849) do
     t.boolean "has_invoice", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["code"], name: "index_role_types_on_code", unique: true
-    t.index ["internal_admin_type", "internal_application_type", "ordering_party_type", "courier_type", "supplier_type"], name: "role_types_type_uk", unique: true
+    t.index ["code"], name: "index_roles_on_code", unique: true
+    t.index ["internal_admin_type", "internal_application_type", "ordering_party_type", "courier_type", "supplier_type"], name: "roles_type_uk", unique: true
   end
 
   create_table "statuses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
@@ -173,13 +173,13 @@ ActiveRecord::Schema.define(version: 2020_04_12_112849) do
   create_table "user_roles", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "uuid", limit: 36, null: false
     t.bigint "user_id", null: false
-    t.bigint "role_type_id", null: false
+    t.bigint "role_id", null: false
     t.string "invoice", limit: 36
     t.date "valid_from"
     t.date "valid_through"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["role_type_id"], name: "index_user_roles_on_role_type_id"
+    t.index ["role_id"], name: "index_user_roles_on_role_id"
     t.index ["user_id"], name: "index_user_roles_on_user_id"
   end
 
@@ -225,10 +225,10 @@ ActiveRecord::Schema.define(version: 2020_04_12_112849) do
   add_foreign_key "delivery_statuses", "statuses"
   add_foreign_key "devices", "device_types"
   add_foreign_key "devices", "users"
-  add_foreign_key "role_type_device_types", "device_types"
-  add_foreign_key "role_type_device_types", "role_types"
+  add_foreign_key "role_device_types", "device_types"
+  add_foreign_key "role_device_types", "roles"
   add_foreign_key "statuses", "statuses"
-  add_foreign_key "user_roles", "role_types"
+  add_foreign_key "user_roles", "roles"
   add_foreign_key "user_roles", "users"
   add_foreign_key "workflows", "device_types"
   add_foreign_key "workflows", "statuses", column: "new_status_id"
