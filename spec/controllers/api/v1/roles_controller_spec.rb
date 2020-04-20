@@ -23,13 +23,13 @@ RSpec.describe Api::V1::RolesController, type: :controller do
     {
       code: Faker::Lorem.characters[0..19].upcase,
       name: Faker::Lorem.words(number: 100).join(' ').capitalize,
-      internal_admin_type: Faker::Boolean.boolean,
-      internal_application_type: Faker::Boolean.boolean,
-      ordering_party_type: Faker::Boolean.boolean,
-      courier_type: Faker::Boolean.boolean,
-      supplier_type: Faker::Boolean.boolean,
-      has_duration: Faker::Boolean.boolean,
-      has_invoice: Faker::Boolean.boolean
+      internal_admin_type: nil,
+      internal_application_type: nil,
+      ordering_party_type: nil,
+      courier_type: nil,
+      supplier_type: nil,
+      has_duration: nil,
+      has_invoice: nil
     }
   }
 

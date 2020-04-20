@@ -21,11 +21,11 @@ RSpec.describe Api::V1::DeviceTypesController, type: :controller do
     {
       code: Faker::Lorem.characters[0..19].upcase,
       name: Faker::Lorem.words(number: 100).join(' ').capitalize,
-      internal_api_server_type: Faker::Boolean.boolean,
-      internal_web_server_type: Faker::Boolean.boolean,
-      desktop_type: Faker::Boolean.boolean,
-      web_server_type: Faker::Boolean.boolean,
-      mobile_type: Faker::Boolean.boolean
+      internal_api_server_type: nil,
+      internal_web_server_type: nil,
+      desktop_type: nil,
+      web_server_type: nil,
+      mobile_type: nil
     }
   }
 
