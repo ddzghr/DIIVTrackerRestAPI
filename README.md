@@ -43,17 +43,21 @@ Things you may want to cover:
 
     http://api.diivtracker.com/api/v1/diiv/system/address-types
     
-    http://api.diivtracker.com/api/v1/diiv/system/role-types
+    http://api.diivtracker.com/api/v1/diiv/system/roles
     
     http://api.diivtracker.com/api/v1/diiv/system/device-types
     
-    http://api.diivtracker.com/api/v1/diiv/system/role-type-device-types
+    http://api.diivtracker.com/api/v1/diiv/system/roles-device-types
     
     http://api.diivtracker.com/api/v1/diiv/system/statuses
                         
     http://api.diivtracker.com/api/v1/diiv/system/workflows
     
-    http://api.diivtracker.com/api/v1/diiv/system/users/{e-mail}
+    http://api.diivtracker.com/api/v1/diiv/system/users
+    
+    http://api.diivtracker.com/api/v1/diiv/system/users/login
+    
+    http://api.diivtracker.com/api/v1/diiv/system/users/logout
     
 ######Client sub-zone
     

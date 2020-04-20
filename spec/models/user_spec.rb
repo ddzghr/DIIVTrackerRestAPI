@@ -46,21 +46,21 @@ RSpec.describe User, type: :model do
     replica.user_active = nil
     expect(replica).to_not be_valid
   end
-  it { should validate_presence_of(:user_active) }
+  it { should_not allow_value(nil).for(:user_active) }
 
   it "is not valid without a user_locked" do
     replica = subject.clone
     replica.user_locked = nil
     expect(replica).to_not be_valid
   end
-  it { should validate_presence_of(:user_locked) }
+  it { should_not allow_value(nil).for(:user_locked) }
 
   it "is not valid without a email_confirmed" do
     replica = subject.clone
     replica.email_confirmed = nil
     expect(replica).to_not be_valid
   end
-  it { should validate_presence_of(:email_confirmed) }
+  it { should_not allow_value(nil).for(:email_confirmed) }
 
   it "is not valid without a confirm_token" do
     replica = subject.clone
@@ -75,19 +75,5 @@ RSpec.describe User, type: :model do
     expect(replica).to_not be_valid
   end
   it { should validate_presence_of(:password_reset_token) }
-
-  it "is not valid without a created_at" do
-    replica = subject.clone
-    replica.created_at = nil
-    expect(replica).to_not be_valid
-  end
-  it { should validate_presence_of(:created_at) }
-
-  it "is not valid without a updated_at" do
-    replica = subject.clone
-    replica.updated_at = nil
-    expect(replica).to_not be_valid
-  end
-  it { should validate_presence_of(:updated_at) }
 
 end

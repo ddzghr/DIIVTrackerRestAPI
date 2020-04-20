@@ -17,7 +17,12 @@ class User < ApplicationRecord
            class_name: 'Delivery',
            foreign_key: 'courier_id'
 
-  validates_presence_of :name, :email, :password_digest, :user_active,
-                        :user_locked, :email_confirmed, :confirm_token,
-                        :password_reset_token, :created_at, :updated_at
+  validates_presence_of :name,
+                        :email,
+                        :password_digest,
+                        :confirm_token,
+                        :password_reset_token
+  validates :user_active, inclusion: [true, false]
+  validates :user_locked, inclusion: [true, false]
+  validates :email_confirmed, inclusion: [true, false]
 end

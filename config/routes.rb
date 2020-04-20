@@ -11,6 +11,7 @@ Rails.application.routes.draw do
             resources :role_device_types, :path => '/roles-device-types'
             resources :statuses
             resources :workflows
+            resources :users
           end
         end
       end
