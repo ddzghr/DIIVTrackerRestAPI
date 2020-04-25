@@ -55,55 +55,50 @@ Things you may want to cover:
     
     http://api.diivtracker.com/api/v1/diiv/system/users
     
-    http://api.diivtracker.com/api/v1/diiv/system/users/login
-    
-    http://api.diivtracker.com/api/v1/diiv/system/users/logout
     
 ######Client sub-zone
     
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/validate
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/login
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/logout
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/user-roles
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/user-roles/{uuid}
     
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/roles
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/roles/{uuid}
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/roles/{uuid}/devices
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/roles/{uuid}/devices/{uuid}
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/devices
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/devices/{uuid}
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/devices/{uuid}/issue-token
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/devices/{uuid}/locations
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/devices/{uuid}/roles
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/devices/{uuid}/roles/{uuid}
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/deliveries
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/deliveries/{uuid}
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/deliveries/{uuid}/statuses
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/deliveries/{uuid}/statuses/{id}
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/deliveries/{uuid}/statuses/{id}/devices/{uuid}/assign
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/deliveries/{uuid}/statuses/{id}/devices/{uuid}/reject
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/deliveries/{uuid}/statuses/{id}/devices/{uuid}/accept
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/deliveries/{uuid}/statuses/{id}/devices/{uuid}/take
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/deliveries/{uuid}/statuses/{id}/devices/{uuid}/store
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/deliveries/{uuid}/statuses/{id}/devices/{uuid}/deliver
-    
-    http://api.diivtracker.com/api/v1/diiv/client/{uuid}/deliveries/{uuid}/statuses/{id}/locations
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/devices
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/devices/{uuid}
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/devices/{uuid}/issue-token
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/devices/{uuid}/gps-locations
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/devices/{uuid}/roles
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/devices/{uuid}/roles/{uuid}
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/deliveries
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/deliveries/{uuid}
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/deliveries/{uuid}/delivery-statuses
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/deliveries/{uuid}/delivery-statuses/{id}
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/deliveries/{uuid}/delivery-statuses/{id}/devices/{uuid}/assign
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/deliveries/{uuid}/delivery-statuses/{id}/devices/{uuid}/reject
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/deliveries/{uuid}/delivery-statuses/{id}/devices/{uuid}/accept
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/deliveries/{uuid}/delivery-statuses/{id}/devices/{uuid}/take
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/deliveries/{uuid}/delivery-statuses/{id}/devices/{uuid}/store
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/deliveries/{uuid}/delivery-statuses/{id}/devices/{uuid}/deliver
+
+    http://api.diivtracker.com/api/v1/diiv/clients/{uuid}/deliveries/{uuid}/delivery-statuses/{id}/gps-locations
     
 ######Administrator sub-zone
     
@@ -111,23 +106,15 @@ Things you may want to cover:
         
     http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}
     
-    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/roles
+    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/user-roles
     
-    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/roles/{uuid}
-    
-    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/roles/{uuid}/devices
-    
-    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/roles/{uuid}/devices/{uuid}
+    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/user-roles/{uuid}
     
     http://api.diivtracker.com/api/v1/diiv/admin/devices
+        
+    http://api.diivtracker.com/api/v1/diiv/admin/devices/{uuid}/gps-locations
     
-    http://api.diivtracker.com/api/v1/diiv/admin/devices/{uuid}/roles
-    
-    http://api.diivtracker.com/api/v1/diiv/admin/devices/{uuid}/roles/{uuid}
-    
-    http://api.diivtracker.com/api/v1/diiv/admin/devices/{uuid}/locations
-    
-    http://api.diivtracker.com/api/v1/diiv/admin/devices/{uuid}/locations/{id}    
+    http://api.diivtracker.com/api/v1/diiv/admin/devices/{uuid}/gps-locations/{id}    
     
 ##Supplier
 
@@ -135,10 +122,11 @@ Things you may want to cover:
     
     http://api.diivtracker.com/api/v1/supplier/desktop/deliveries/{uuid}
     
-    http://api.diivtracker.com/api/v1/supplier/desktop/deliveries/{uuid}/statuses
+    http://api.diivtracker.com/api/v1/supplier/desktop/deliveries/{uuid}/delivery-statuses
 
 ##Courier
-
+    http://api.diivtracker.com/api/v1/courier/deliveries
+    
 ######WEB server sub-zone
 
     http://api.diivtracker.com/api/v1/courier/web/devices
@@ -147,47 +135,44 @@ Things you may want to cover:
         
     http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}
     
-    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/statuses
+    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/delivery-statuses
     
-    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/statuses/{id}
+    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/delivery-statuses/{id}
     
-    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/statuses/{id}/devices/{uuid}/assign
+    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/delivery-statuses/{id}/devices/{uuid}/assign
     
-    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/statuses/{id}/devices/{uuid}/reject
+    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/delivery-statuses/{id}/devices/{uuid}/reject
     
-    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/statuses/{id}/devices/{uuid}/accept
+    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/delivery-statuses/{id}/devices/{uuid}/accept
     
-    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/statuses/{id}/devices/{uuid}/take
+    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/delivery-statuses/{id}/devices/{uuid}/take
     
-    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/statuses/{id}/devices/{uuid}/store
+    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/delivery-statuses/{id}/devices/{uuid}/store
     
-    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/statuses/{id}/devices/{uuid}/deliver
+    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/delivery-statuses/{id}/devices/{uuid}/deliver
     
-    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/statuses/{id}/locations
+    http://api.diivtracker.com/api/v1/courier/web/deliveries/{uuid}/delivery-statuses/{id}/gps-locations
         
 ######Mobile device sub-zone
             
-    http://api.diivtracker.com/api/v1/courier/mobile/locations
+    http://api.diivtracker.com/api/v1/courier/mobile/gps-locations
     
     http://api.diivtracker.com/api/v1/courier/mobile/deliveries
         
     http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}
     
-    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/statuses
+    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/delivery-statuses
     
-    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/statuses/{id}/locations
+    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/delivery-statuses/{id}/gps-locations
     
-    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/statuses/{id}/assign
+    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/delivery-statuses/{id}/assign
     
-    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/statuses/{id}/reject
+    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/delivery-statuses/{id}/reject
     
-    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/statuses/{id}/accept
+    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/delivery-statuses/{id}/accept
     
-    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/statuses/{id}/take
+    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/delivery-statuses/{id}/take
     
-    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/statuses/{id}/store
+    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/delivery-statuses/{id}/store
     
-    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/statuses/{id}/deliver
-    
-    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/statuses/{id}/locations
-    
+    http://api.diivtracker.com/api/v1/courier/mobile/deliveries/{uuid}/delivery-statuses/{id}/deliver

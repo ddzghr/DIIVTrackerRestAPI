@@ -2,6 +2,7 @@
 class User < ApplicationRecord
   has_secure_token :confirm_token
   has_secure_token :password_reset_token
+  has_secure_token :connection_token
   has_secure_password
   has_uuid
   has_one :address, as: :addressable
@@ -19,9 +20,7 @@ class User < ApplicationRecord
 
   validates_presence_of :name,
                         :email,
-                        :password_digest,
-                        :confirm_token,
-                        :password_reset_token
+                        :password_digest
   validates :user_active, inclusion: [true, false]
   validates :user_locked, inclusion: [true, false]
   validates :email_confirmed, inclusion: [true, false]

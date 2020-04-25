@@ -9,7 +9,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
     {
       name: Faker::Name.name,
       email: Faker::Internet.email,
-      password_digest: Faker::Internet.password,
+      password: Faker::Internet.password,
       company_name: Faker::Company.name,
       user_active: Faker::Boolean.boolean,
       user_locked: Faker::Boolean.boolean,
@@ -23,7 +23,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
     {
       name: Faker::Lorem.words(number: 100).join(' ').capitalize,
       email: Faker::Lorem.words(number: 3).join(' ').capitalize,
-      password_digest: Faker::Lorem.words(number: 3).join(' ').capitalize,
+      password: Faker::Lorem.words(number: 3).join(' ').capitalize,
       company_name: Faker::Lorem.words(number: 100).join(' ').capitalize,
       user_active: nil,
       user_locked: nil,
@@ -87,7 +87,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
         {
           name: Faker::Name.name,
           email: Faker::Internet.email,
-          password_digest: Faker::Internet.password,
+          password: Faker::Internet.password,
           company_name: Faker::Company.name,
           user_active: Faker::Boolean.boolean,
           user_locked: Faker::Boolean.boolean,
@@ -101,7 +101,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
         user = User.create! valid_attributes
         put :update, params: {id: user.to_param, user: new_attributes}, session: valid_session
         user.reload
-        new_attributes.each_pair do |key, value|
+        new_attributes.except(:password).each_pair do |key, value|
           expect(user[key]).to eq(value),"expected #{key} to have value #{value} but got #{user[key]}"
         end
       end

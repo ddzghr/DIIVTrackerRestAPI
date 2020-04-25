@@ -101,6 +101,7 @@ ActiveRecord::Schema.define(version: 2020_04_12_112849) do
 
   create_table "devices", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "uuid", limit: 36, null: false
+    t.string "secret_token_digest", null: false
     t.string "name", limit: 150, null: false
     t.bigint "user_id", null: false
     t.bigint "device_type_id", null: false
@@ -194,6 +195,7 @@ ActiveRecord::Schema.define(version: 2020_04_12_112849) do
     t.boolean "email_confirmed", default: false, null: false
     t.string "confirm_token", null: false
     t.string "password_reset_token", null: false
+    t.string "connection_token", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["confirm_token"], name: "index_users_on_confirm_token", unique: true

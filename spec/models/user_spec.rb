@@ -62,18 +62,18 @@ RSpec.describe User, type: :model do
   end
   it { should_not allow_value(nil).for(:email_confirmed) }
 
-  it "is not valid without a confirm_token" do
-    replica = subject.clone
-    replica.confirm_token = nil
-    expect(replica).to_not be_valid
-  end
-  it { should validate_presence_of(:confirm_token) }
-
-  it "is not valid without a password_reset_token" do
-    replica = subject.clone
-    replica.password_reset_token = nil
-    expect(replica).to_not be_valid
-  end
-  it { should validate_presence_of(:password_reset_token) }
+  # it "is not valid without a confirm_token" do
+  #   replica = subject.clone
+  #   replica.confirm_token = nil
+  #   expect(replica).to_not be_valid
+  # end
+  # it { should validate_presence_of(:confirm_token) }
+  #
+  # it "is not valid without a password_reset_token" do
+  #   replica = subject.clone
+  #   replica.password_reset_token = nil
+  #   expect(replica).to_not be_valid
+  # end
+  # it { should validate_presence_of(:password_reset_token) }
 
 end

@@ -28,6 +28,16 @@ module Api
         end
       end
 
+      # POST /users
+      def confirm
+
+      end
+
+      # POST /users
+      def reset
+
+      end
+
       # PATCH/PUT /users/1
       def update
         if @user.update(user_params)
@@ -53,7 +63,8 @@ module Api
       def user_params
         params.require(:user).permit(:name,
                                      :email,
-                                     :password_digest,
+                                     :password,
+                                     :password_confirmation,
                                      :company_name,
                                      :user_active,
                                      :user_locked,

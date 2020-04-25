@@ -11,6 +11,7 @@ class CreateUsers < ActiveRecord::Migration[5.2]
       t.boolean :email_confirmed, default: false, null: false
       t.string :confirm_token, null: false
       t.string :password_reset_token, null: false
+      t.string :connection_token, null: false
 
       t.timestamps null: false
     end

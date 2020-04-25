@@ -2,6 +2,7 @@ class CreateDevices < ActiveRecord::Migration[5.2]
   def change
     create_table :devices do |t|
       t.string :uuid, limit: 36, null: false
+      t.string :secret_token_digest, null: false
       t.string :name, limit: 150, null: false
       t.references :user, foreign_key: true, null: false
       t.references :device_type, foreign_key: true, null: false
