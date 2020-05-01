@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 class User < ApplicationRecord
+  after_initialize :set_default_values, unless: :persisted?
+
   has_secure_token :confirm_token
   has_secure_token :password_reset_token
   has_secure_token :connection_token
@@ -24,4 +26,13 @@ class User < ApplicationRecord
   validates :user_active, inclusion: [true, false]
   validates :user_locked, inclusion: [true, false]
   validates :email_confirmed, inclusion: [true, false]
+
+  private
+
+  def set_default_values
+    self.user_active = true
+    self.user_locked = false
+    self.email_confirmed = false
+    self.force_password_change = false
+  end
 end

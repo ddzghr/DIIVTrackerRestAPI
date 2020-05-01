@@ -6,8 +6,11 @@ Rails.application.routes.draw do
         scope '/free' do
           scope '/users' do
             post '/signup', to: 'users#create'
-            post '/confirm-user', to: 'users#confirm'
-            post '/reset', to: 'users#reset'
+          end
+          resources :users, param: :uuid, only: [] do
+            get 'reset-my-credentials', on: :member, to: 'reset_my_credentials'
+            get 'reset', param: :token, on: :member
+            get 'confirm', param: :token, on: :member
           end
           scope '/devices' do
             post '/confirm-device', to: 'devices#confirm'
@@ -22,11 +25,7 @@ Rails.application.routes.draw do
             resources :role_device_types, path: '/roles-device-types'
             resources :statuses
             resources :workflows
-            resources :users
-            #resources :users, param: :uuid do
-            #  post 'login'
-            #  post 'logout'
-            #end
+            resources :users, param: :uuid
           end
           resources :clients, param: :uuid, only: [] do
             post 'login', to: 'authentication#authenticate'

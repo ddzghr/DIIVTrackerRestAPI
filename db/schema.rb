@@ -190,9 +190,10 @@ ActiveRecord::Schema.define(version: 2020_04_12_112849) do
     t.string "email", limit: 254, null: false
     t.string "password_digest", null: false
     t.string "company_name", limit: 150
-    t.boolean "user_active", default: false, null: false
-    t.boolean "user_locked", default: false, null: false
-    t.boolean "email_confirmed", default: false, null: false
+    t.boolean "user_active", null: false
+    t.boolean "user_locked", null: false
+    t.boolean "email_confirmed", null: false
+    t.boolean "force_password_change", null: false
     t.string "confirm_token", null: false
     t.string "password_reset_token", null: false
     t.string "connection_token", null: false
