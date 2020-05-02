@@ -58,13 +58,13 @@ RSpec.describe Api::V1::RolesController, type: :controller do
     context "with valid params" do
       it "creates a new Role" do
         expect {
-          post :create, params: {role: valid_attributes}, session: valid_session
+          post :create, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/roles', role: valid_attributes}, session: valid_session
         }.to change(Role, :count).by(1)
       end
 
       it "renders a JSON response with the new role" do
 
-        post :create, params: {role: valid_attributes}, session: valid_session
+        post :create, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/roles', role: valid_attributes}, session: valid_session
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json')
         expect(response.location).to eq(role_url(Role.last))
@@ -74,7 +74,7 @@ RSpec.describe Api::V1::RolesController, type: :controller do
     context "with invalid params" do
       it "renders a JSON response with errors for the new role" do
 
-        post :create, params: {role: invalid_attributes}, session: valid_session
+        post :create, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/roles', role: invalid_attributes}, session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -99,7 +99,7 @@ RSpec.describe Api::V1::RolesController, type: :controller do
 
       it "updates the requested role" do
         role = Role.create! valid_attributes
-        put :update, params: {id: role.to_param, role: new_attributes}, session: valid_session
+        put :update, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/roles', id: role.to_param, role: new_attributes}, session: valid_session
         role.reload
         new_attributes.each_pair do |key, value|
           expect(role[key]).to eq(value),"expected #{key} to have value #{value} but got #{role[key]}"
@@ -109,7 +109,7 @@ RSpec.describe Api::V1::RolesController, type: :controller do
       it "renders a JSON response with the role" do
         role = Role.create! valid_attributes
 
-        put :update, params: {id: role.to_param, role: valid_attributes}, session: valid_session
+        put :update, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/roles', id: role.to_param, role: valid_attributes}, session: valid_session
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to eq('application/json')
       end
@@ -119,7 +119,7 @@ RSpec.describe Api::V1::RolesController, type: :controller do
       it "renders a JSON response with errors for the role" do
         role = Role.create! valid_attributes
 
-        put :update, params: { id: role.to_param, role: invalid_attributes }, session: valid_session
+        put :update, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/roles',  id: role.to_param, role: invalid_attributes }, session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -130,7 +130,7 @@ RSpec.describe Api::V1::RolesController, type: :controller do
     it "destroys the requested role" do
       role = Role.create! valid_attributes
       expect {
-        delete :destroy, params: { id: role.to_param }, session: valid_session
+        delete :destroy, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/roles',  id: role.to_param }, session: valid_session
       }.to change(Role, :count).by(-1)
     end
   end

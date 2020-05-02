@@ -8,7 +8,7 @@ RSpec.describe Api::V1::DeviceTypesController, type: :controller do
   let(:valid_attributes) {
     {
       code: Faker::Lorem.characters[0..9].upcase,
-      name: Faker::Lorem.words(number: 5).join(' ').capitalize,
+      name: Faker::Lorem.words(number: 3).join(' ').capitalize,
       internal_api_server_type: Faker::Boolean.boolean,
       internal_web_server_type: Faker::Boolean.boolean,
       desktop_type: Faker::Boolean.boolean,
@@ -54,13 +54,13 @@ RSpec.describe Api::V1::DeviceTypesController, type: :controller do
     context "with valid params" do
       it "creates a new DeviceType" do
         expect {
-          post :create, params: {device_type: valid_attributes}, session: valid_session
+          post :create, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/device-types', device_type: valid_attributes}, session: valid_session
         }.to change(DeviceType, :count).by(1)
       end
 
       it "renders a JSON response with the new device_type" do
 
-        post :create, params: {device_type: valid_attributes}, session: valid_session
+        post :create, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/device-types', device_type: valid_attributes}, session: valid_session
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json')
         expect(response.location).to eq(device_type_url(DeviceType.last))
@@ -70,7 +70,7 @@ RSpec.describe Api::V1::DeviceTypesController, type: :controller do
     context "with invalid params" do
       it "renders a JSON response with errors for the new device_type" do
 
-        post :create, params: {device_type: invalid_attributes}, session: valid_session
+        post :create, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/device-types', device_type: invalid_attributes}, session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -93,7 +93,7 @@ RSpec.describe Api::V1::DeviceTypesController, type: :controller do
 
       it "updates the requested device_type" do
         device_type = DeviceType.create! valid_attributes
-        put :update, params: {id: device_type.to_param, device_type: new_attributes}, session: valid_session
+        put :update, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/device-types', id: device_type.to_param, device_type: new_attributes}, session: valid_session
         device_type.reload
         new_attributes.each_pair do |key, value|
           expect(device_type[key]).to eq(value),"expected #{key} to have value #{value} but got #{device_type[key]}"
@@ -103,7 +103,7 @@ RSpec.describe Api::V1::DeviceTypesController, type: :controller do
       it "renders a JSON response with the device_type" do
         device_type = DeviceType.create! valid_attributes
 
-        put :update, params: {id: device_type.to_param, device_type: valid_attributes}, session: valid_session
+        put :update, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/device-types', id: device_type.to_param, device_type: valid_attributes}, session: valid_session
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to eq('application/json')
       end
@@ -113,7 +113,7 @@ RSpec.describe Api::V1::DeviceTypesController, type: :controller do
       it "renders a JSON response with errors for the device_type" do
         device_type = DeviceType.create! valid_attributes
 
-        put :update, params: {id: device_type.to_param, device_type: invalid_attributes}, session: valid_session
+        put :update, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/device-types', id: device_type.to_param, device_type: invalid_attributes}, session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -124,7 +124,7 @@ RSpec.describe Api::V1::DeviceTypesController, type: :controller do
     it "destroys the requested device_type" do
       device_type = DeviceType.create! valid_attributes
       expect {
-        delete :destroy, params: {id: device_type.to_param}, session: valid_session
+        delete :destroy, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/device-types', id: device_type.to_param}, session: valid_session
       }.to change(DeviceType, :count).by(-1)
     end
   end

@@ -27,10 +27,24 @@ Rails.application.routes.draw do
             resources :workflows, only: [:index, :show]
             resources :users, param: :uuid, only: [:index, :show]
           end
+          resources :admins, param: :uuid, only: [] do
+            resources :address_types, path: '/address-types'
+            resources :roles
+            resources :device_types, path: '/device-types'
+            resources :role_device_types, path: '/roles-device-types'
+            resources :statuses
+            resources :workflows
+            resources :users, param: :uuid do
+              resources :user_roles, path: '/user-roles'
+            end
+            resources :devices, param: :uuid do
+              resources :gps_locations, path: '/gps-locations'
+            end
+          end
           resources :clients, param: :uuid, only: [] do
             post 'login', to: 'user_authentication#authenticate'
             post 'logout', to: 'user_authentication#logout'
-            resources :user_roles
+            resources :user_roles, path: '/user-roles'
             resources :devices, param: :uuid do
               resources :gps_locations, path: '/gps-locations'
             end

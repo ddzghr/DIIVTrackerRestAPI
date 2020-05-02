@@ -18,7 +18,7 @@ class ApplicationController < ActionController::API
   # Check for valid request token and return user
   def authorize_request
     if request.path_info.include?('clients')
-      @current_user = Api::V1::AuthorizeClientApiRequest.new(request.parameters[:client_uuid], request.headers).call[:user]
+      @current_user = AuthorizeClientApiRequest.new(request.parameters[:client_uuid], request.headers).call[:user]
     end
   end
 

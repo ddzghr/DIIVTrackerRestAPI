@@ -102,19 +102,19 @@ Things you may want to cover:
     
 ######Administrator sub-zone
     
-    http://api.diivtracker.com/api/v1/diiv/admin/users    
+    http://api.diivtracker.com/api/v1/diiv/admins/{uuid}/users    
         
-    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}
+    http://api.diivtracker.com/api/v1/diiv/admins/{uuid}/users/{uuid}
     
-    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/user-roles
+    http://api.diivtracker.com/api/v1/diiv/admins/{uuid}/users/{uuid}/user-roles
     
-    http://api.diivtracker.com/api/v1/diiv/admin/users/{uuid}/user-roles/{uuid}
+    http://api.diivtracker.com/api/v1/diiv/admins/{uuid}/users/{uuid}/user-roles/{uuid}
     
-    http://api.diivtracker.com/api/v1/diiv/admin/devices
+    http://api.diivtracker.com/api/v1/diiv/admins/{uuid}/devices
         
-    http://api.diivtracker.com/api/v1/diiv/admin/devices/{uuid}/gps-locations
+    http://api.diivtracker.com/api/v1/diiv/admins/{uuid}/devices/{uuid}/gps-locations
     
-    http://api.diivtracker.com/api/v1/diiv/admin/devices/{uuid}/gps-locations/{id}    
+    http://api.diivtracker.com/api/v1/diiv/admins/{uuid}/devices/{uuid}/gps-locations/{id}    
     
 ##Supplier
 

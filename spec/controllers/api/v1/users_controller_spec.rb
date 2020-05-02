@@ -5,11 +5,14 @@ RSpec.describe Api::V1::UsersController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # User. As you add validations to User, be sure to
   # adjust the attributes here as well.
+  let(:pass){ Faker::Internet.password }
+
   let(:valid_attributes) {
     {
       name: Faker::Name.name,
       email: Faker::Internet.email,
-      password: Faker::Internet.password,
+      password: :pass,
+      password_confirmation: :pass,
       company_name: Faker::Company.name
     }
   }
@@ -77,16 +80,17 @@ RSpec.describe Api::V1::UsersController, type: :controller do
         {
           name: Faker::Name.name,
           email: Faker::Internet.email,
-          password: Faker::Internet.password,
+          password: :pass,
+          password_confirmation: :pass,
           company_name: Faker::Company.name
         }
       }
 
       it "updates the requested user" do
         user = User.create! valid_attributes
-        put :update, params: {uuid: user.uuid.to_param, user: new_attributes}, session: valid_session
+        put :update, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/users', uuid: user.uuid.to_param, user: new_attributes}, session: valid_session
         user.reload
-        new_attributes.except(:password).each_pair do |key, value|
+        new_attributes.except(:password, :password_confirmation).each_pair do |key, value|
           expect(user[key]).to eq(value),"expected #{key} to have value #{value} but got #{user[key]}"
         end
       end
@@ -94,7 +98,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
       it "renders a JSON response with the user" do
         user = User.create! valid_attributes
 
-        put :update, params: {uuid: user.uuid.to_param, user: valid_attributes}, session: valid_session
+        put :update, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/users', uuid: user.uuid.to_param, user: valid_attributes}, session: valid_session
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to eq('application/json')
       end
@@ -104,7 +108,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
       it "renders a JSON response with errors for the user" do
         user = User.create! valid_attributes
 
-        put :update, params: {uuid: user.uuid.to_param, user: invalid_attributes}, session: valid_session
+        put :update, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/users', uuid: user.uuid.to_param, user: invalid_attributes}, session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -115,7 +119,7 @@ RSpec.describe Api::V1::UsersController, type: :controller do
     it "destroys the requested user" do
       user = User.create! valid_attributes
       expect {
-        delete :destroy, params: {uuid: user.uuid.to_param}, session: valid_session
+        delete :destroy, params: { use_route: '/api/v1/diiv/admins/:admin_uuid/users', uuid: user.uuid.to_param}, session: valid_session
       }.to change(User, :count).by(-1)
     end
   end
