@@ -3,8 +3,8 @@
 module Api
   module V1
     class UsersController < ApplicationController
-      before_action :set_user, only: [:show, :confirm, :reset_my_credentials, :reset, :update, :destroy]
-
+      skip_before_action :authorize_request, only: %i[create confirm reset reset_my_credentials]
+      before_action :set_user, only: %i[show confirm reset_my_credentials reset update destroy]
       # GET /users
       def index
         @users = User.all

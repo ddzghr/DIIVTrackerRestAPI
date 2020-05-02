@@ -23,6 +23,8 @@ class User < ApplicationRecord
   validates_presence_of :name,
                         :email,
                         :password_digest
+  validates_presence_of :password_confirmation, if: -> { password.present? }
+  validates_confirmation_of :password, if: -> { password.present? }
   validates :user_active, inclusion: [true, false]
   validates :user_locked, inclusion: [true, false]
   validates :email_confirmed, inclusion: [true, false]
