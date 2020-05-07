@@ -22,7 +22,7 @@ module Api
         @user_role = UserRole.new(user_role_params)
 
         if @user_role.save
-          render json: @user_role, status: :created, location: @user_role
+          render json: @user_role, status: :created #, location: @user_role
         else
           render json: @user_role.errors, status: :unprocessable_entity
         end

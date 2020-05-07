@@ -22,7 +22,7 @@ module Api
         @role_device_type = RoleDeviceType.new(role_device_type_params)
 
         if @role_device_type.save
-          render json: @role_device_type, status: :created, location: @role_device_type
+          render json: @role_device_type, status: :created #, location: @role_device_type
         else
           render json: @role_device_type.errors, status: :unprocessable_entity
         end

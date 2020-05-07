@@ -20,9 +20,8 @@ module Api
       # POST /device_types
       def create
         @device_type = DeviceType.new(device_type_params)
-
         if @device_type.save
-          render json: @device_type, status: :created, location: @device_type
+          render json: @device_type, status: :created #, location: clients_client_device_types_url(@device_type)
         else
           render json: @device_type.errors, status: :unprocessable_entity
         end

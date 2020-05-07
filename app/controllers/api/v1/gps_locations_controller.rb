@@ -22,7 +22,7 @@ module Api
         @gps_location = GpsLocation.new(gps_location_params)
 
         if @gps_location.save
-          render json: @gps_location, status: :created, location: @gps_location
+          render json: @gps_location, status: :created #, location: @gps_location
         else
           render json: @gps_location.errors, status: :unprocessable_entity
         end

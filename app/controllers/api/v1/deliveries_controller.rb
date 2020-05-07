@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 module Api
   module V1
+    # Handles deliveries
     class DeliveriesController < ApplicationController
       before_action :set_delivery, only: [:show, :update, :destroy]
 
@@ -22,7 +23,7 @@ module Api
         @delivery = Delivery.new(delivery_params)
 
         if @delivery.save
-          render json: @delivery, status: :created, location: @delivery
+          render json: @delivery, status: :created #, location: @delivery
         else
           render json: @delivery.errors, status: :unprocessable_entity
         end

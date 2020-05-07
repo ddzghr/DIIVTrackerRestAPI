@@ -22,7 +22,7 @@ module Api
         @workflow = Workflow.new(workflow_params)
 
         if @workflow.save
-          render json: @workflow, status: :created, location: @workflow
+          render json: @workflow, status: :created #, location: @workflow
         else
           render json: @workflow.errors, status: :unprocessable_entity
         end

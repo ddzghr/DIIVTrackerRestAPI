@@ -21,7 +21,7 @@ module Api
       def create
         @address_type = AddressType.new(address_type_params)
         if @address_type.save
-          render json: @address_type, status: :created, location: @address_type
+          render json: @address_type, status: :created #, location: @address_type
         else
           render json: @address_type.errors, status: :unprocessable_entity
         end

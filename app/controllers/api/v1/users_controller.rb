@@ -23,7 +23,7 @@ module Api
 
         if @user.save
           UserMailer.with(user: @user).confirm_email.deliver_now
-          render json: @user, status: :created, location: @user
+          render json: @user, status: :created #, location: @user
         else
           render json: @user.errors, status: :unprocessable_entity
         end

@@ -22,7 +22,7 @@ module Api
         @status = Status.new(status_params)
 
         if @status.save
-          render json: @status, status: :created, location: @status
+          render json: @status, status: :created #, location: @status
         else
           render json: @status.errors, status: :unprocessable_entity
         end

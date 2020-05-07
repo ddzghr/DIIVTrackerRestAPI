@@ -22,7 +22,7 @@ module Api
         @delivery_status = DeliveryStatus.new(delivery_status_params)
 
         if @delivery_status.save
-          render json: @delivery_status, status: :created, location: @delivery_status
+          render json: @delivery_status, status: :created #, location: @delivery_status
         else
           render json: @delivery_status.errors, status: :unprocessable_entity
         end
