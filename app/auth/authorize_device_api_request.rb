@@ -1,5 +1,5 @@
-# app/auth/authorize_client_api_request.rb
-class AuthorizeClientApiRequest
+# app/auth/authorize_device_api_request.rb
+class AuthorizeDeviceApiRequest
   def initialize(uuid, headers = {})
     @uuid = uuid
     @headers = headers
@@ -7,7 +7,7 @@ class AuthorizeClientApiRequest
 
   # Service entry point - return valid user object
   def call
-    user
+    device
   end
 
   private
@@ -15,24 +15,26 @@ class AuthorizeClientApiRequest
   attr_reader :headers
   attr_reader :uuid
 
-  def user
-    # check if user is in the database
-    # check if token matches user
-    # memorize user object
-    client = User.find_by_uuid(uuid)
-    if client &&
-       client.user_active? &&
-       client.email_confirmed? &&
-       !client.user_locked? &&
+  def device
+    # check if device is in the database
+    # check if token matches device
+    # memorize device object
+    f_device = Device.find_by_uuid(uuid)
+    if f_device &&
+       f_device.device_active? &&
+       f_device.device_confirmed? &&
+       f_device.user.user_active? &&
+       f_device.user.email_confirmed? &&
+       !f_device.user.user_locked? &&
        decoded_auth_token &&
-       client.uuid == decoded_auth_token[:sub] &&
-       client.connection_token == decoded_auth_token[:prm] &&
+       f_device.uuid == decoded_auth_token[:sub] &&
+       f_device.connection_token == decoded_auth_token[:prm] &&
        Time.now.to_i.between?(decoded_auth_token[:iat], decoded_auth_token[:exp])
-      @user ||= client
+      @device ||= f_device
     else
       raise(ExceptionHandler::InvalidToken, Message.unauthorized)
     end
-
+    
   # handle user not found
   rescue ActiveRecord::RecordNotFound => e
     # raise custom error

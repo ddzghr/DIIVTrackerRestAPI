@@ -19,7 +19,14 @@ class ApplicationController < ActionController::API
   def authorize_request
     if request.path_info.include?('clients')
       @current_user = AuthorizeClientApiRequest.new(request.parameters[:client_uuid], request.headers).call[:user]
+    elsif request.path_info.include?('apps')
+      @current_device = AuthorizeDeviceApiRequest.new(request.parameters[:device_uuid], request.headers).call[:device]
+      @current_user = @current_device.user unless @current_device.nil?
     end
+  end
+
+  def current_ability
+    @current_ability ||= Ability.new(current_user, current_device)
   end
 
 end

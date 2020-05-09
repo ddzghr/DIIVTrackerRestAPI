@@ -8,11 +8,12 @@ class CreateDevices < ActiveRecord::Migration[5.2]
       t.references :device_type, foreign_key: true, null: false
       t.date :valid_from, null: true
       t.date :valid_through, null: true
-      t.boolean :device_active, default: false, null: false
-      t.boolean :device_confirmed, default: false, null: false
+      t.boolean :device_active, null: false
+      t.boolean :device_confirmed, null: false
       t.string :confirm_token, null: false
-      t.boolean :device_locked, default: false, null: false
+      t.boolean :device_locked, null: false
       t.string :unlock_token, null: false
+      t.string :connection_token, null: false
 
       t.timestamps null: false
     end

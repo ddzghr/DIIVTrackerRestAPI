@@ -3,7 +3,8 @@
 module Api
   module V1
     class DevicesController < ApplicationController
-      before_action :set_device, only: [:show, :update, :destroy]
+      skip_before_action :authorize_request, only: %i[create confirm reset reset_my_credentials]
+      before_action :set_device, only: %i[show confirm reset update destroy]
 
       # GET /devices
       def index
@@ -28,9 +29,40 @@ module Api
         end
       end
 
+      # GET /users
+      def confirm
+        render json: 'Already confirmed', status: :unprocessable_entity and return unless @device.device_confirmed?
+        if params[:device_token] == @device.confirm_token
+          @device.device_confirmed = true
+          if @device.save(validate: false)
+            render json: @device
+          else
+            render json: @device.errors, status: :unprocessable_entity
+          end
+        else
+          render json: 'Invalid token', status: :unprocessable_entity
+        end
+      end
+
+      # GET /users
+      def reset
+        secret_token = SecureRandom.base58(24)
+        @device.secret_token = secret_token
+        @device.secret_token_confirmation = secret_token
+        @device.device_confirmed = false # Force confirmation
+        if @device.save
+          DeviceMailer.with(device: @device).confirm_device.deliver_now
+          render json: secret_token, status: :ok
+        else
+          render json: @device.errors, status: :unprocessable_entity
+        end
+      end
+
       # PATCH/PUT /devices/1
       def update
+        @device.device_confirmed = false
         if @device.update(device_params)
+          DeviceMailer.with(device: @device).confirm_device.deliver_now
           render json: @device
         else
           render json: @device.errors, status: :unprocessable_entity
@@ -46,7 +78,7 @@ module Api
 
       # Use callbacks to share common setup or constraints between actions.
       def set_device
-        @device = Device.find(params[:id])
+        @device = Device.find(params[:uuid])
       end
 
       # Only allow a trusted parameter "white list" through.

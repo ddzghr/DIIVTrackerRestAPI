@@ -107,11 +107,12 @@ ActiveRecord::Schema.define(version: 2020_04_12_112849) do
     t.bigint "device_type_id", null: false
     t.date "valid_from"
     t.date "valid_through"
-    t.boolean "device_active", default: false, null: false
-    t.boolean "device_confirmed", default: false, null: false
+    t.boolean "device_active", null: false
+    t.boolean "device_confirmed", null: false
     t.string "confirm_token", null: false
-    t.boolean "device_locked", default: false, null: false
+    t.boolean "device_locked", null: false
     t.string "unlock_token", null: false
+    t.string "connection_token", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["confirm_token"], name: "index_devices_on_confirm_token", unique: true

@@ -29,6 +29,26 @@ class User < ApplicationRecord
   validates :user_locked, inclusion: [true, false]
   validates :email_confirmed, inclusion: [true, false]
 
+  def is_admin?
+    is_admin
+  end
+
+  def is_application?
+    is_application
+  end
+
+  def is_orderer?
+    is_orderer
+  end
+
+  def is_courier?
+    is_courier
+  end
+
+  def is_supplier?
+    is_supplier
+  end
+
   private
 
   def set_default_values
@@ -37,4 +57,35 @@ class User < ApplicationRecord
     self.email_confirmed = false
     self.force_password_change = false
   end
+
+  def is_admin
+    return true if roles.find_by internal_admin_type: true
+
+    false
+  end
+
+  def is_application
+    return true if roles.find_by internal_application_type: true
+
+    false
+  end
+
+  def is_orderer
+    return true if roles.find_by ordering_party_type: true
+
+    false
+  end
+
+  def is_courier
+    return true if roles.find_by courier_type: true
+
+    false
+  end
+
+  def is_supplier
+    return true if roles.find_by supplier_type: true
+
+    false
+  end
+
 end

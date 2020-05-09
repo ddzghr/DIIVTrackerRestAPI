@@ -1,20 +1,18 @@
 Rails.application.routes.draw do
 # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
-  # This is scope which does not need authentication
-  # so it is open for usage
+# This is scope which does not need authentication
+# so it is open for usage
   scope module: 'api/v1', path: 'api/v1/free', as: 'free' do
     resources :deliveries, param: :uuid, only: [:show]
     resource :user, path: 'signup', only: [:create]
     resources :users, param: :uuid, only: [] do
       get 'reset-my-credentials', on: :member, to: 'reset_my_credentials'
-      get 'reset', param: :token, on: :member
-      get 'confirm', param: :token, on: :member
+      get 'reset', param: :user_token, on: :member
+      get 'confirm', param: :user_token, on: :member
     end
     resources :devices, param: :uuid, only: [] do
-      get 'reset-my-credentials', on: :member, to: 'reset_my_credentials'
-      get 'reset', param: :token, on: :member
-      get 'confirm', param: :token, on: :member
+      get 'confirm', param: :device_token, on: :member
     end
   end
 
@@ -24,15 +22,21 @@ Rails.application.routes.draw do
     resources :clients, param: :uuid, only: [] do
       post 'login', to: 'user_authentication#authenticate'
       post 'logout', to: 'user_authentication#logout'
-      resources :user_roles, path: 'my-roles'
-      resources :devices, param: :uuid, path: 'my-devices' do
-        resources :gps_locations, path: 'gps-locations'
+      resources :user_roles, param: :uuid, path: 'user-roles'
+      resources :devices, param: :uuid, path: 'devices' do
+        get 'reset', on: :member
+        resources :gps_locations, path: 'gps-locations', only: [:index, :create]
       end
-      resources :deliveries, param: :uuid do
-        resources :delivery_statuses, path: 'delivery-statuses' do
-          resources :gps_locations, path: 'gps-locations'
+      resources :deliveries, param: :uuid, path: 'deliveries' do
+        resources :delivery_statuses, path: 'delivery-statuses', only: [:index, :create] do
+          resources :gps_locations, path: 'gps-locations', only: [:index, :create]
         end
       end
+      resources :delivery_statuses, path: 'delivery-statuses', except: [:index, :create] do
+        resources :gps_locations, path: 'gps-locations', only: [:index, :create]
+      end
+      resources :gps_locations, path: 'gps-locations', except: [:index, :create]
+
       # This is Admin part
       resources :address_types, path: '/address-types'
       resources :roles
@@ -41,10 +45,16 @@ Rails.application.routes.draw do
       resources :statuses
       resources :workflows
       resources :users, param: :uuid do
-        resources :user_roles, path: '/user-roles'
-      end
-      resources :devices, param: :uuid do
-        resources :gps_locations, path: '/gps-locations'
+        resources :user_roles, path: '/user-roles', only: [:index, :create]
+        resources :devices, param: :uuid, only: [:index, :create] do
+          get 'reset', on: :member
+          resources :gps_locations, path: '/gps-locations', only: [:index, :create]
+        end
+        resources :deliveries, param: :uuid, path: 'deliveries', only: [:index, :create] do
+          resources :delivery_statuses, path: 'delivery-statuses', only: [:index, :create] do
+            resources :gps_locations, path: 'gps-locations', only: [:index, :create]
+          end
+        end
       end
       # end of Admin part
     end
@@ -69,7 +79,7 @@ Rails.application.routes.draw do
       resources :statuses, only: [:index, :show]
       resources :workflows, only: [:index, :show]
       resources :users, param: :uuid, only: [:index, :show] do
-        resources :user_roles, path: '/user-roles', only: [:index, :show]
+        resources :user_roles, param: :uuid, path: '/user-roles', only: [:index, :show]
       end
       # end of part for DIIVTracker WEB application
     end

@@ -10,12 +10,12 @@ class AuthenticateUser
 
   # Service entry point
   def call
-    if user
-      JsonWebToken.encode({iss: @host,
-                           aud: 'DIIVTrackerWeb',
-                           sub: user.uuid,
-                           prm: user.connection_token})
-    end
+    l_user = user
+    JsonWebToken.encode({iss: @host,
+                         aud: 'DIIVTrackerClients',
+                         sub: l_user.uuid,
+                         prm: l_user.connection_token}) if l_user
+
   end
 
   private
@@ -25,22 +25,26 @@ class AuthenticateUser
   # verify user credentials
   def user
 
-    user = User.find_by_uuid(uuid)
-    if user && user.authenticate(password)
+    f_user = User.find_by_uuid(uuid)
+    if f_user &&
+       f_user.user_active? &&
+       f_user.email_confirmed? &&
+       !f_user.user_locked? &&
+       f_user.authenticate(password)
       # check if password change is required
-      if user.force_password_change? && (@new_password.blank? || @new_password_confirmation.blank?)
+      if f_user.force_password_change? && (@new_password.blank? || @new_password_confirmation.blank?)
         raise(ExceptionHandler::MissingPasswordChange, Message.must_change_password)
       end
       # generate new connection token, multiple connections not allowed
-      user.regenerate_connection_token
+      f_user.regenerate_connection_token
       # change password if needed
       unless @new_password.blank? && @new_password_confirmation.blank?
-        user.update_attributes!(password: @new_password,
+        f_user.update_attributes!(password: @new_password,
                                 password_confirmation: @new_password_confirmation,
                                 force_password_change: false)
       end
-      # finally return user
-      return user
+      # finally return f_user
+      return f_user
 
     end
     # raise Authentication error if credentials are invalid

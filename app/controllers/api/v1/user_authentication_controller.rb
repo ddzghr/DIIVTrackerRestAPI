@@ -4,10 +4,11 @@ module Api
   module V1
     class UserAuthenticationController < ApplicationController
       skip_before_action :authorize_request, only: :authenticate
+
       # return auth token once user is authenticated
       def authenticate
         auth_token = AuthenticateUser.new(request.host,
-                                          auth_params[:client_uuid],
+                                          params[:client_uuid],
                                           auth_params[:password],
                                           auth_params[:new_password],
                                           auth_params[:new_password_confirmation])
@@ -18,8 +19,8 @@ module Api
       private
 
       def auth_params
-        params.permit(:client_uuid,
-                      :password,
+        params.require(:user_authentication)
+              .permit(:password,
                       :new_password,
                       :new_password_confirmation)
       end

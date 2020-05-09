@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+  </head>
+  <body>
+    <h1>Welcome to DIIVTracker, <%= @device.user.name %></h1>
+    <p>
+      You have successfully added or changed a device.
+      Your device name is: <%= @device.name %><br>
+      and device UUID is: <%= @device.uuid %>.
+    </p>
+    <p>
+      To enable logging to the site, first you have to confirm your device <br>
+      with just following this link: <%= link_to 'Confirm my device', @url %>.
+    </p>
+    <p>Thanks for joining and have a great day!</p>
+  </body>
+</html>
