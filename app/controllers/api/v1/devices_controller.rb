@@ -31,7 +31,7 @@ module Api
 
       # GET /users
       def confirm
-        render json: 'Already confirmed', status: :unprocessable_entity and return unless @device.device_confirmed?
+        render json: 'Already confirmed', status: :unprocessable_entity and return if @device.device_confirmed?
         if params[:device_token] == @device.confirm_token
           @device.device_confirmed = true
           if @device.save(validate: false)

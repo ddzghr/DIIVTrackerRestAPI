@@ -7,7 +7,9 @@ class AuthorizeDeviceApiRequest
 
   # Service entry point - return valid user object
   def call
-    device
+    {
+      device: device
+    }
   end
 
   private

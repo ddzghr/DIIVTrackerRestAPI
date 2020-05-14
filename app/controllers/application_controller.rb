@@ -1,11 +1,12 @@
 class ApplicationController < ActionController::API
   include Response
   include ExceptionHandler
+  attr_reader :current_user
+  attr_reader :current_device
   # called before every action on controllers
   before_action :make_action_mailer_use_request_host_and_protocol
   before_action :authorize_request
-  attr_reader :current_user
-  attr_reader :current_device
+  check_authorization
 
   private
 
@@ -22,6 +23,8 @@ class ApplicationController < ActionController::API
     elsif request.path_info.include?('apps')
       @current_device = AuthorizeDeviceApiRequest.new(request.parameters[:device_uuid], request.headers).call[:device]
       @current_user = @current_device.user unless @current_device.nil?
+    else
+      raise(ExceptionHandler::AuthenticationError, Message.unauthorized)
     end
   end
 

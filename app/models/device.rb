@@ -17,6 +17,30 @@ class Device < ApplicationRecord
   validates :device_confirmed, inclusion: [true, false]
   validates :device_locked, inclusion: [true, false]
 
+  def internal_api_server?
+    internal_api_server_type?
+  end
+
+  def internal_web_server?
+    internal_web_server_type?
+  end
+
+  def desktop?
+    desktop_type?
+  end
+
+  def web_server?
+    web_server_type?
+  end
+
+  def mobile?
+    mobile_type?
+  end
+
+  def logout
+    logout_me
+  end
+
   private
 
   def set_default_values
@@ -24,4 +48,29 @@ class Device < ApplicationRecord
     self.device_confirmed = false
     self.device_locked = false
   end
+
+  def internal_api_server_type?
+    device_type.internal_api_server_type?
+  end
+
+  def internal_web_server_type?
+    device_type.internal_web_server_type?
+  end
+
+  def desktop_type?
+    device_type.desktop_type?
+  end
+
+  def web_server_type?
+    device_type.web_server_type?
+  end
+
+  def mobile_type?
+    device_type.mogile_type?
+  end
+
+  def logout_me
+    regenerate_connection_token
+  end
+
 end

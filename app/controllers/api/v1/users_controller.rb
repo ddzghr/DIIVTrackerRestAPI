@@ -3,17 +3,19 @@
 module Api
   module V1
     class UsersController < ApplicationController
+      prepend_before_action :set_user, only: %i[show confirm reset_my_credentials reset update destroy]
       skip_before_action :authorize_request, only: %i[create confirm reset reset_my_credentials]
-      before_action :set_user, only: %i[show confirm reset_my_credentials reset update destroy]
+      load_and_authorize_resource except: %i[create confirm reset reset_my_credentials]
+      skip_authorization_check only: %i[confirm reset reset_my_credentials]
       # GET /users
       def index
-        @users = User.all
-
+        @users = User.accessible_by(current_ability)
         render json: @users
       end
 
       # GET /users/1
       def show
+        authorize! :show, @user
         render json: @user
       end
 
@@ -31,7 +33,7 @@ module Api
 
       # GET /users
       def confirm
-        render json: 'Already confirmed', status: :unprocessable_entity and return unless @user.email_confirmed?
+        render json: 'Already confirmed', status: :unprocessable_entity and return if @user.email_confirmed?
         if params[:user_token] == @user.confirm_token
           @user.email_confirmed = true
           if @user.save(validate: false)
@@ -87,17 +89,28 @@ module Api
 
       # Use callbacks to share common setup or constraints between actions.
       def set_user
-        @user = User.find_by_uuid(params[:uuid])
-        render json: "Can't be processed", status: :unprocessable_entity unless @user && @user.user_active?
+        @user ||= User.find_by_uuid(params[:uuid])
+        render json: "Request cannot be processed", status: :unprocessable_entity unless @user && @user.user_active?
       end
 
       # Only allow a trusted parameter "white list" through.
       def user_params
-        params.require(:user).permit(:name,
-                                     :email,
-                                     :password,
-                                     :password_confirmation,
-                                     :company_name)
+        if @current_user.admin?
+          params.require(:user).permit(:name,
+                                       :email,
+                                       :password,
+                                       :password_confirmation,
+                                       :company_name,
+                                       :user_active,
+                                       :user_locked,
+                                       :force_password_change)
+        else
+          params.require(:user).permit(:name,
+                                       :email,
+                                       :password,
+                                       :password_confirmation,
+                                       :company_name)
+        end
       end
     end
   end

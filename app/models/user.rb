@@ -29,24 +29,28 @@ class User < ApplicationRecord
   validates :user_locked, inclusion: [true, false]
   validates :email_confirmed, inclusion: [true, false]
 
-  def is_admin?
-    is_admin
+  def admin?
+    admin_role?
   end
 
-  def is_application?
-    is_application
+  def application?
+    application_role?
   end
 
-  def is_orderer?
-    is_orderer
+  def orderer?
+    orderer_role?
   end
 
-  def is_courier?
-    is_courier
+  def courier?
+    courier_role?
   end
 
-  def is_supplier?
-    is_supplier
+  def supplier?
+    supplier_role?
+  end
+
+  def logout
+    logout_me
   end
 
   private
@@ -58,34 +62,38 @@ class User < ApplicationRecord
     self.force_password_change = false
   end
 
-  def is_admin
+  def admin_role?
     return true if roles.find_by internal_admin_type: true
 
     false
   end
 
-  def is_application
+  def application_role?
     return true if roles.find_by internal_application_type: true
 
     false
   end
 
-  def is_orderer
+  def orderer_role?
     return true if roles.find_by ordering_party_type: true
 
     false
   end
 
-  def is_courier
+  def courier_role?
     return true if roles.find_by courier_type: true
 
     false
   end
 
-  def is_supplier
+  def supplier_role?
     return true if roles.find_by supplier_type: true
 
     false
+  end
+
+  def logout_me
+    regenerate_connection_token
   end
 
 end

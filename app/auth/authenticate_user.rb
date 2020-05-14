@@ -40,8 +40,8 @@ class AuthenticateUser
       # change password if needed
       unless @new_password.blank? && @new_password_confirmation.blank?
         f_user.update_attributes!(password: @new_password,
-                                password_confirmation: @new_password_confirmation,
-                                force_password_change: false)
+                                  password_confirmation: @new_password_confirmation,
+                                  force_password_change: false)
       end
       # finally return f_user
       return f_user
