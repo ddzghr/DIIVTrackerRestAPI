@@ -6,7 +6,7 @@ class ApplicationController < ActionController::API
   # called before every action on controllers
   before_action :make_action_mailer_use_request_host_and_protocol
   before_action :authorize_request
-  check_authorization
+  #check_authorization
 
   private
 

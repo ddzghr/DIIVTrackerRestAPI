@@ -46,10 +46,9 @@ ActiveRecord::Schema.define(version: 2020_04_12_112849) do
 
   create_table "deliveries", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.string "uuid", limit: 36, null: false
-    t.string "email", limit: 254, null: false
-    t.decimal "amount_on_delivery", precision: 15, scale: 2
-    t.string "orderer_name", limit: 150, null: false
     t.string "orderer_email", limit: 254, null: false
+    t.string "orderer_name", limit: 150, null: false
+    t.decimal "amount_on_delivery", precision: 15, scale: 2
     t.bigint "orderer_id"
     t.bigint "supplier_id", null: false
     t.bigint "courier_id", null: false

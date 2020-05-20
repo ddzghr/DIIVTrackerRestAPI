@@ -47,7 +47,7 @@ module Api
 
       # Use callbacks to share common setup or constraints between actions.
       def set_delivery
-        @delivery = Delivery.find(params[:id])
+        @delivery = Delivery.find_by_uuid(params[:uuid])
       end
 
       # Only allow a trusted parameter "white list" through.
