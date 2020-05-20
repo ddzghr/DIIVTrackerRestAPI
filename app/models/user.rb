@@ -56,10 +56,10 @@ class User < ApplicationRecord
   private
 
   def set_default_values
-    self.user_active = true
-    self.user_locked = false
-    self.email_confirmed = false
-    self.force_password_change = false
+    self.user_active = true if user_active.nil?
+    self.user_locked = false if user_locked.nil?
+    self.email_confirmed = false if email_confirmed.nil?
+    self.force_password_change = false if force_password_change.nil?
   end
 
   def admin_role?

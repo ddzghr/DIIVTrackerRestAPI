@@ -2,6 +2,7 @@
 module Api
   module V1
     class UserSerializer < ActiveModel::Serializer
+      has_one :address
       attributes :uuid,
                  :name,
                  :email,

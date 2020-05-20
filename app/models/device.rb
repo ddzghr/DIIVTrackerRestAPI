@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Device < ApplicationRecord
   after_initialize :set_default_values, unless: :persisted?
 
@@ -44,9 +46,9 @@ class Device < ApplicationRecord
   private
 
   def set_default_values
-    self.device_active = true
-    self.device_confirmed = false
-    self.device_locked = false
+    self.device_active = true if device_active.nil?
+    self.device_confirmed = false if device_confirmed.nil?
+    self.device_locked = false if device_locked.nil?
   end
 
   def internal_api_server_type?
@@ -72,5 +74,4 @@ class Device < ApplicationRecord
   def logout_me
     regenerate_connection_token
   end
-
 end

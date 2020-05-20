@@ -14,7 +14,7 @@ class Ability
     return unless user.admin?
 
     # admins
-    #can :manage, :all
+    can :manage, :all
 
     # Define abilities for the passed in user here. For example:
     #
