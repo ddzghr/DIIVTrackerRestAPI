@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
 # This is scope which does not need authentication
 # so it is open for usage
+  root to: 'hellos#index'
   scope module: 'api/v1', path: 'api/v1/free', as: 'free' do
     resources :deliveries, param: :uuid, only: [:show]
     resource :user, path: 'signup', only: [:create]

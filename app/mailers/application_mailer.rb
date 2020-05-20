@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: 'diiv@ddhome.local'
+  default from: 'diiv@diiv.local'
   layout 'mailer'
 end
