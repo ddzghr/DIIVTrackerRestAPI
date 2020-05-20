@@ -44,9 +44,9 @@ class Device < ApplicationRecord
   private
 
   def set_default_values
-    self.device_active = true
-    self.device_confirmed = false
-    self.device_locked = false
+    self.device_active ||= true
+    self.device_confirmed ||= false
+    self.device_locked ||= false
   end
 
   def internal_api_server_type?
