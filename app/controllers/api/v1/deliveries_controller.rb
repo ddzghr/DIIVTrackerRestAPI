@@ -5,6 +5,7 @@ module Api
     # Handles deliveries
     class DeliveriesController < ApplicationController
       before_action :set_delivery, only: [:show, :update, :destroy]
+      skip_authorization_check
 
       # GET /deliveries
       def index

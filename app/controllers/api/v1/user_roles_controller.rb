@@ -4,6 +4,7 @@ module Api
   module V1
     class UserRolesController < ApplicationController
       before_action :set_user_role, only: [:show, :update, :destroy]
+      skip_authorization_check
 
       # GET /user_roles
       def index

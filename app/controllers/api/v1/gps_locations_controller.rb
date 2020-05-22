@@ -4,6 +4,7 @@ module Api
   module V1
     class GpsLocationsController < ApplicationController
       before_action :set_gps_location, only: [:show, :update, :destroy]
+      skip_authorization_check
 
       # GET /gps_locations
       def index

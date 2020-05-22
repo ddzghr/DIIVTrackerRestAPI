@@ -4,6 +4,7 @@ module Api
   module V1
     class AddressTypesController < ApplicationController
       before_action :set_address_type, only: [:show, :update, :destroy]
+      skip_authorization_check
 
       # GET /api/v1/address-types
       def index
