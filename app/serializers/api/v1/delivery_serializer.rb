@@ -3,9 +3,7 @@
 module Api
   module V1
     class DeliverySerializer < ActiveModel::Serializer
-      #has_one :current_address
-      attributes :id,
-                 :uuid,
+      attributes :uuid,
                  :amount_on_delivery,
                  :orderer_name,
                  :orderer_email,
@@ -15,8 +13,12 @@ module Api
                  :courier,
                  :current_address,
                  :from_address,
-                 :to_address
+                 :to_address,
+                 :current_status
 
+      def current_status
+        ShortDeliveryDeliveryStatusSerializer.new(DeliveryStatus.find(object.current_status.id), root: false) unless object.current_status.id.nil?
+      end
 
       def current_address
         render_address(object.current_address.address)

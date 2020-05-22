@@ -2,9 +2,15 @@
 module Api
   module V1
     class UserRoleSerializer < ActiveModel::Serializer
-      attributes :id, :uuid, :invoice, :valid_from, :valid_through
-      has_one :user
-      has_one :role
+      attributes :uuid, :invoice, :valid_from, :valid_through
+      has_one :user, serializer: ShortUserSerializer do
+        options[:root] = false
+        object.user
+      end
+      has_one :role, serializer: ShortRoleSerializer do
+        options[:root] = false
+        object.role
+      end
     end
   end
 end

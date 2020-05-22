@@ -47,7 +47,7 @@ module Api
 
       # Use callbacks to share common setup or constraints between actions.
       def set_user_role
-        @user_role = UserRole.find(params[:id])
+        @user_role = UserRole.find_by_uuid(params[:uuid])
       end
 
       # Only allow a trusted parameter "white list" through.
