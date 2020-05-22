@@ -4,6 +4,7 @@ module Api
   module V1
     class RoleDeviceTypesController < ApplicationController
       before_action :set_role_device_type, only: [:show, :update, :destroy]
+      skip_authorization_check
 
       # GET /role_device_types
       def index

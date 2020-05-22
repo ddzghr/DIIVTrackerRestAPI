@@ -4,6 +4,7 @@ module Api
   module V1
     class DeliveryStatusesController < ApplicationController
       before_action :set_delivery_status, only: [:show, :update, :destroy]
+      skip_authorization_check
 
       # GET /delivery_statuses
       def index

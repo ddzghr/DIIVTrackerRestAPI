@@ -4,6 +4,7 @@ module Api
   module V1
     class DeviceTypesController < ApplicationController
       before_action :set_device_type, only: [:show, :update, :destroy]
+      skip_authorization_check
 
       # GET /device_types
       def index
