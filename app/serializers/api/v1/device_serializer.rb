@@ -3,9 +3,21 @@
 module Api
   module V1
     class DeviceSerializer < ActiveModel::Serializer
-      attributes :id, :uuid, :secret_token_digest, :name, :valid_from, :valid_through, :device_active, :device_confirmed, :confirm_token, :device_locked, :unlock_token
-      has_one :user
-      has_one :device_type
+      attributes :uuid,
+                 :name,
+                 :valid_from,
+                 :valid_through,
+                 :device_active,
+                 :device_confirmed,
+                 :device_locked
+      has_one :user, serializer: ShortUserSerializer do
+        options[:root] = false
+        object.user
+      end
+      has_one :device_type, serializer: ShortDeviceTypeSerializer do
+        options[:root] = false
+        object.user
+      end
     end
   end
 end

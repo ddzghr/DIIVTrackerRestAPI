@@ -2,7 +2,7 @@ class DeliveryStatus < ApplicationRecord
   belongs_to :delivery
   belongs_to :status
   belongs_to :device
-  belongs_to :assigned_device, class_name: 'Device'
+  belongs_to :assigned_device, class_name: 'Device', optional: true
   has_one :destination,
           as: :addressable,
           dependent: :destroy,
