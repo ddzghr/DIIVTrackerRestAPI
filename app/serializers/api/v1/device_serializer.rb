@@ -16,7 +16,7 @@ module Api
       end
       has_one :device_type, serializer: ShortDeviceTypeSerializer do
         options[:root] = false
-        object.user
+        object.device_type
       end
     end
   end

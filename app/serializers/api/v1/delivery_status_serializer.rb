@@ -20,6 +20,14 @@ module Api
         options[:root] = false
         object.assigned_device
       end
+      has_one :last_location, serializer: ShortGpsLocationSerializer do
+        options[:root] = false
+        object.last_location
+      end
+      has_one :contact, serializer: ShortContactSerializer do
+        options[:root] = false
+        object.contact
+      end
     end
   end
 end

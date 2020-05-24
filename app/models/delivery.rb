@@ -21,4 +21,6 @@ class Delivery < ApplicationRecord
 
   has_one :current_status, -> { order('id DESC').limit(1) },
           class_name: 'DeliveryStatus'
+
+  has_one :contact, as: :contactable, required: false
 end

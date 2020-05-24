@@ -9,6 +9,10 @@ module Api
                  :county,
                  :postal_code_and_name,
                  :country
+      has_one :gps_location, serializer: ShortAddressGpsLocationSerializer do
+        options[:root] = false
+        object.gps_location
+      end
     end
   end
 end

@@ -8,5 +8,7 @@ class DeliveryStatus < ApplicationRecord
           dependent: :destroy,
           class_name: 'Address'
   has_many :gps_locations, as: :locatable
-  has_one :contact, as: :contactable
+  has_one :last_location, -> { order('id DESC').limit(1) },
+          class_name: 'GpsLocation', as: :locatable
+  has_one :contact, as: :contactable, required: false
 end
