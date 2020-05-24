@@ -15,6 +15,10 @@ module Api
                  :from_address,
                  :to_address,
                  :current_status
+      has_one :contact, serializer: ShortContactSerializer do
+        options[:root] = false
+        object.contact
+      end
 
       def current_status
         ShortDeliveryDeliveryStatusSerializer.new(DeliveryStatus.find(object.current_status.id), root: false) unless object.current_status.id.nil?

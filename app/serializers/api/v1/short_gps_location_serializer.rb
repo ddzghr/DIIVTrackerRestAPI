@@ -1,7 +1,7 @@
-# app/serializers/api/v1/gps_location_serializer.rb
+# app/serializers/api/v1/short_gps_location_serializer.rb
 module Api
   module V1
-    class GpsLocationSerializer < ActiveModel::Serializer
+    class ShortGpsLocationSerializer < ActiveModel::Serializer
       attributes :id,
                  :gps_latitude,
                  :gps_longitude,
