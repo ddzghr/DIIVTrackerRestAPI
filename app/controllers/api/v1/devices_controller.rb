@@ -5,6 +5,7 @@ module Api
     class DevicesController < ApplicationController
       skip_before_action :authorize_request, only: %i[create confirm reset reset_my_credentials]
       before_action :set_device, only: %i[show confirm reset update destroy]
+      skip_authorization_check
 
       # GET /devices
       def index
