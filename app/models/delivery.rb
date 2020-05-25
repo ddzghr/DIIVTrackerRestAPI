@@ -3,6 +3,7 @@ class Delivery < ApplicationRecord
   belongs_to :orderer, class_name: 'User', optional: true
   belongs_to :supplier, class_name: 'User'
   belongs_to :courier, class_name: 'User'
+  has_many :delivery_statuses
   has_many :delivery_addresses, inverse_of: :delivery
   has_many :address_types, through: :delivery_addresses
   has_many :addresses, through: :delivery_addresses, as: :addressable

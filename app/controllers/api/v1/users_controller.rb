@@ -9,8 +9,14 @@ module Api
       skip_authorization_check only: %i[confirm reset reset_my_credentials]
       # GET /users
       def index
-        @users = User.accessible_by(current_ability)
+        #@users = User.accessible_by(current_ability)
         render json: @users
+      end
+
+      # GET /couriers
+      def list_couriers
+        @users = @users.joins(:user_roles).joins(:roles).where(roles: { courier_type: true })
+        render json: @users, each_serializer: ShortUserSerializer
       end
 
       # GET /users/1
