@@ -83,7 +83,7 @@ Rails.application.routes.draw do
         resources :user_roles, param: :uuid, path: '/user-roles', only: [:index, :show]
       end
       get 'couriers', to: 'users#list_couriers'
-      get 'fetch_owner', to: 'users#fetch_owner'
+      get 'fetch-owner', to: 'users#fetch_owner'
       # end of part for DIIVTracker WEB application
     end
   end
