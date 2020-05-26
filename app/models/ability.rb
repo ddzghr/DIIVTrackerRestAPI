@@ -9,10 +9,23 @@ class Ability
     return if user.nil?
 
     # plain users
+    # read or update own user
     can [:read, :update], User,
         id: user.id, user_active: true, user_locked: false, email_confirmed: true
-    return unless user.admin?
+    # read or update own address
+    can [:read, :update], Address,
+        [ addressable_id: user.id, addressable_type: User.class.name]
+    # read or update own roles
+    can [:read, :update], UserRole,
+        user_id: user.id
+    unless device.nil?
+      # list couriers
+      can [:list_couriers], User, user_active: true if device.desktop?
+      # list owners
+      can [:fetch_owner], User
+    end
 
+    return unless user.admin?
     # admins
     can :manage, :all
 

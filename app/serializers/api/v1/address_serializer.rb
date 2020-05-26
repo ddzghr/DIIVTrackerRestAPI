@@ -2,8 +2,7 @@
 module Api
   module V1
     class AddressSerializer < ActiveModel::Serializer
-      attributes :id,
-                 :street,
+      attributes :street,
                  :city_arrea_or_district,
                  :city_or_town_or_village,
                  :county,

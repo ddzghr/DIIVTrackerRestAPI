@@ -5,12 +5,25 @@ module Api
     class UsersController < ApplicationController
       prepend_before_action :set_user, only: %i[show confirm reset_my_credentials reset update destroy]
       skip_before_action :authorize_request, only: %i[create confirm reset reset_my_credentials]
-      load_and_authorize_resource except: %i[create confirm reset reset_my_credentials]
+      load_and_authorize_resource except: %i[create confirm reset reset_my_credentials fetch_owner]
+      authorize_resource only: %i[fetch_owner]
       skip_authorization_check only: %i[confirm reset reset_my_credentials]
       # GET /users
       def index
-        @users = User.accessible_by(current_ability)
         render json: @users
+      end
+
+      # GET /couriers
+      def list_couriers
+        @users = @users.joins(:user_roles).joins(:roles).where(roles: { courier_type: true })
+        render json: @users, each_serializer: ShortUserSerializer
+      end
+
+      # GET /owners
+      # Device only
+      def fetch_owner
+        render json: 'Apps/Devices endpoint only', status: :unprocessable_entity and return if @current_device.nil?
+        render json: @current_user, serializer: UserSerializer
       end
 
       # GET /users/1

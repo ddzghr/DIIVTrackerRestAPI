@@ -4,17 +4,29 @@ module Api
   module V1
     class UserRolesController < ApplicationController
       before_action :set_user_role, only: [:show, :update, :destroy]
+      load_and_authorize_resource
       skip_authorization_check
 
       # GET /user_roles
       def index
-        @user_roles = UserRole.all
-
+        #@user_roles = UserRole.all
+        #Filter context
+        if params[:user_uuid]
+          @user_roles = @user_roles.find_by_user_id(User.find_by_uuid(params[:user_uuid]))
+        elsif params[:client_uuid]
+          @user_roles = @user_roles.find_by_user_id(@current_user.id)
+        end
         render json: @user_roles
       end
 
       # GET /user_roles/1
       def show
+        authorize! :show, @user_role
+        if params[:user_uuid]
+          raise CanCan::AccessDenied unless @user_role.user_id == User.find_by_uuid(params[:user_uuid]).id
+        elsif params[:client_uuid]
+          raise CanCan::AccessDenied unless @user_role.user_id == @current_user.id
+        end
         render json: @user_role
       end
 
