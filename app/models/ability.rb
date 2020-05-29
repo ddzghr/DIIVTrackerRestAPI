@@ -18,9 +18,13 @@ class Ability
     # read or update own roles
     can [:read, :update], UserRole,
         user_id: user.id
-    # list couriers
-    can [:list_couriers], User,
-        user_active: true
+    unless device.nil?
+      # list couriers
+      can [:list_couriers], User, user_active: true if device.desktop?
+      # list owners
+      can [:fetch_owner], User
+    end
+
     return unless user.admin?
     # admins
     can :manage, :all
