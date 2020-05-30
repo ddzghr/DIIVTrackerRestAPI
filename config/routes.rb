@@ -68,8 +68,24 @@ Rails.application.routes.draw do
       post 'login', to: 'device_authentication#authenticate'
       post 'logout', to: 'device_authentication#logout'
       resources :deliveries, param: :uuid, only: [:index, :show, :create] do
+        post 'pickup', on: :member, to: 'delivery_statuses#pickup'
+        post 'accept', on: :member, to: 'delivery_statuses#accept'
+        post 'assign', on: :member, to: 'delivery_statuses#assign'
+        post 'reject', on: :member, to: 'delivery_statuses#reject'
+        post 'store', on: :member, to: 'delivery_statuses#store'
+        post 'deliver', on: :member, to: 'delivery_statuses#deliver'
+        post 'lost', on: :member, to: 'delivery_statuses#lost'
+        post 'cancel', on: :member, to: 'delivery_statuses#cancel'
         resources :delivery_statuses, path: 'delivery-statuses' do
           resources :gps_locations, path: 'gps-locations'
+          post 'pickup', on: :collection
+          post 'accept', on: :collection
+          post 'assign', on: :collection
+          post 'reject', on: :collection
+          post 'store', on: :collection
+          post 'deliver', on: :collection
+          post 'lost', on: :collection
+          post 'cancel', on: :collection
         end
       end
       # this is part for DIIVTracker WEB application

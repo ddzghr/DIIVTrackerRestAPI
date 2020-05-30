@@ -17,6 +17,10 @@ module Api
         options[:root] = false
         object.contact
       end
+      has_one :destination, serializer: AddressSerializer do
+        options[:root] = false
+        object.destination
+      end
     end
   end
 end

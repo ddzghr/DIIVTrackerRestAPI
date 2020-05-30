@@ -26,15 +26,15 @@ module Api
       end
 
       def current_address
-        render_address(object.current_address.address)
+        render_address(object.current_address.address) unless object.current_address.nil?
       end
 
       def from_address
-        render_address(object.from_address.address)
+        render_address(object.from_address.address) unless object.from_address.nil?
       end
 
       def to_address
-        render_address(object.to_address.address)
+        render_address(object.to_address.address) unless object.to_address.nil?
       end
 
       def orderer
