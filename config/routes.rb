@@ -88,6 +88,7 @@ Rails.application.routes.draw do
           post 'cancel', on: :collection
         end
       end
+
       # this is part for DIIVTracker WEB application
       resources :address_types, only: [:index, :show], path: 'address-types'
       resources :roles, only: [:index, :show]

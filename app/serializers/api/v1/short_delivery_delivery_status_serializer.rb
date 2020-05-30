@@ -5,6 +5,10 @@ module Api
     class ShortDeliveryDeliveryStatusSerializer < ActiveModel::Serializer
       attributes :id,
                  :local_datetime
+      belongs_to :assigned_device, serializer: ShortDeviceSerializer do
+        options[:root] = false
+        object.assigned_device
+      end
       has_one :last_location, serializer: ShortGpsLocationSerializer do
         options[:root] = false
         object.last_location
