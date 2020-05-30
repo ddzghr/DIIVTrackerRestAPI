@@ -7,7 +7,10 @@ module Api
       skip_authorization_check
       # actions that require destination
       DESTINATION_ACTIONS = %i[assign accept pickup].freeze
-      DESTINATION_PREVIOUS = %i[accept pickup].freeze
+      # actions that require destination fallbacks
+      DESTINATION_PREVIOUS = %i[accept].freeze
+      DESTINATION_FROM = %i[accept].freeze
+      DESTINATION_TO = %i[pickup].freeze
       # actions that set current address
       CURRENT_ADDRESS_ACTIONS = %i[store deliver].freeze
       CURRENT_ADDRESS_PREVIOUS = %i[store].freeze
@@ -339,6 +342,12 @@ module Api
           elsif DESTINATION_PREVIOUS.include?(params[:action].parameterize.underscore.to_sym) && !delivery.current_status.nil? && !delivery.current_status.destination.nil?
             @delivery_status.destination = delivery.current_status.destination.dup
             @delivery_status.destination.gps_location = delivery.current_status.destination.gps_location.dup unless delivery.current_status.destination.gps_location.nil?
+          elsif DESTINATION_FROM.include?(params[:action].parameterize.underscore.to_sym) && !delivery.from_address.nil? && !delivery.from_address.address.nil?
+            @delivery_status.destination =  delivery.from_address.address.dup
+            @delivery_status.destination.gps_location = delivery.from_address.address.gps_location.dup unless delivery.from_address.address.gps_location.nil?
+          elsif DESTINATION_TO.include?(params[:action].parameterize.underscore.to_sym) && !delivery.to_address.nil? && !delivery.to_address.address.nil?
+            @delivery_status.destination =  delivery.to_address.address.dup
+            @delivery_status.destination.gps_location = delivery.to_address.address.gps_location.dup unless delivery.to_address.address.gps_location.nil?
           end
           delivery_status_create_error = true if @delivery_status.destination.nil?
         end
