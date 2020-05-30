@@ -2,8 +2,7 @@
 module Api
   module V1
     class ShortStatusSerializer < ActiveModel::Serializer
-      attributes :id,
-                 :code,
+      attributes :code,
                  :name
     end
   end
