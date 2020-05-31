@@ -419,9 +419,9 @@ module Api
             end
             unless delivery.to_address.address.gps_location.nil?
               if @delivery_status.delivery.current_address.address.gps_location.nil?
-                @delivery_status.delivery.current_address.address.gps_location.new(delivery.to_address.address.gps_location.gps_location.attributes.slice("gps_latitude", "gps_longitude"))
+                @delivery_status.delivery.current_address.address.gps_location.new(delivery.to_address.address.gps_location.attributes.slice("gps_latitude", "gps_longitude"))
               else
-                @delivery_status.delivery.current_address.address.gps_location.assign_attributes(delivery.to_address.address.gps_location.gps_location.attributes.slice("gps_latitude", "gps_longitude"))
+                @delivery_status.delivery.current_address.address.gps_location.assign_attributes(delivery.to_address.address.gps_location.attributes.slice("gps_latitude", "gps_longitude"))
               end
             end
           else
