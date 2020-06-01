@@ -11,6 +11,8 @@ class Device < ApplicationRecord
   has_secure_token :unlock_token
   has_secure_token :connection_token
   has_many :gps_locations, as: :locatable
+  has_one :last_location, -> { order('id DESC').limit(1) },
+          class_name: 'GpsLocation', as: :locatable
   validates_presence_of :name,
                         :secret_token_digest
   validates_presence_of :secret_token_confirmation, if: -> { secret_token.present? }

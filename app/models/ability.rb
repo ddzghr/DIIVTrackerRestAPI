@@ -14,7 +14,7 @@ class Ability
         id: user.id, user_active: true, user_locked: false, email_confirmed: true
     # read or update own address
     can [:read, :update], Address,
-        [ addressable_id: user.id, addressable_type: User.class.name]
+        [ addressable_id: user.id, addressable_type: 'User']
     # read or update own roles
     can [:read, :update], UserRole,
         user_id: user.id
