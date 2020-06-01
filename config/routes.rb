@@ -23,8 +23,8 @@ Rails.application.routes.draw do
     resources :clients, param: :uuid, only: [] do
       post 'login', to: 'user_authentication#authenticate'
       post 'logout', to: 'user_authentication#logout'
-      resources :user_roles, param: :uuid, path: 'user-roles'
-      resources :devices, param: :uuid, path: 'devices' do
+      resources :user_roles, param: :uuid, except: [:update, :destroy], path: 'user-roles'
+      resources :devices, param: :uuid, except: [:update, :destroy], path: 'devices' do
         get 'reset', on: :member
         resources :gps_locations, path: 'gps-locations', only: [:index, :create]
       end
@@ -33,10 +33,10 @@ Rails.application.routes.draw do
           resources :gps_locations, path: 'gps-locations', only: [:index, :create]
         end
       end
-      resources :delivery_statuses, path: 'delivery-statuses', except: [:index, :create] do
+      resources :delivery_statuses, path: 'delivery-statuses', except: [:index, :create, :update, :destroy] do
         resources :gps_locations, path: 'gps-locations', only: [:index, :create]
       end
-      resources :gps_locations, path: 'gps-locations', except: [:index, :create]
+      resources :gps_locations, path: 'gps-locations', except: [:index, :create, :update, :destroy]
 
       # This is Admin part
       resources :address_types, path: '/address-types'
@@ -76,8 +76,8 @@ Rails.application.routes.draw do
         post 'deliver', on: :member, to: 'delivery_statuses#deliver'
         post 'lost', on: :member, to: 'delivery_statuses#lost'
         post 'cancel', on: :member, to: 'delivery_statuses#cancel'
-        resources :delivery_statuses, path: 'delivery-statuses' do
-          resources :gps_locations, path: 'gps-locations'
+        resources :delivery_statuses, except: [:update, :destroy], path: 'delivery-statuses' do
+          resources :gps_locations, except: [:update, :destroy], path: 'gps-locations'
           post 'pickup', on: :collection
           post 'accept', on: :collection
           post 'assign', on: :collection
@@ -88,6 +88,7 @@ Rails.application.routes.draw do
           post 'cancel', on: :collection
         end
       end
+      resources :gps_locations, path: 'gps-locations', only: [:create]
 
       # this is part for DIIVTracker WEB application
       resources :address_types, only: [:index, :show], path: 'address-types'
