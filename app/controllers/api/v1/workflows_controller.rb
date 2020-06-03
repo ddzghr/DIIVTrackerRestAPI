@@ -4,12 +4,10 @@ module Api
   module V1
     class WorkflowsController < ApplicationController
       before_action :set_workflow, only: [:show, :update, :destroy]
-      skip_authorization_check
+      load_and_authorize_resource
 
       # GET /workflows
       def index
-        @workflows = Workflow.all
-
         render json: @workflows
       end
 
@@ -41,6 +39,7 @@ module Api
       # DELETE /workflows/1
       def destroy
         @workflow.destroy
+        render json: @workflow, status: :ok
       end
 
       private
@@ -52,7 +51,9 @@ module Api
 
       # Only allow a trusted parameter "white list" through.
       def workflow_params
-        params.require(:workflow).permit(:old_status_id, :new_status_id, :device_type_id)
+        params.require(:workflow).permit(:old_status_id,
+                                         :new_status_id,
+                                         :device_type_id)
       end
     end
   end

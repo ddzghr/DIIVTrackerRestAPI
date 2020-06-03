@@ -4,12 +4,10 @@ module Api
   module V1
     class DeviceTypesController < ApplicationController
       before_action :set_device_type, only: [:show, :update, :destroy]
-      skip_authorization_check
+      load_and_authorize_resource
 
       # GET /device_types
       def index
-        @device_types = DeviceType.all
-
         render json: @device_types
       end
 
@@ -40,6 +38,7 @@ module Api
       # DELETE /device_types/1
       def destroy
         @device_type.destroy
+        render json: @device_type, status: :ok
       end
 
       private
@@ -51,7 +50,8 @@ module Api
 
       # Only allow a trusted parameter "white list" through.
       def device_type_params
-        params.require(:device_type).permit(:code, :name,
+        params.require(:device_type).permit(:code,
+                                            :name,
                                             :internal_api_server_type,
                                             :internal_web_server_type,
                                             :desktop_type,

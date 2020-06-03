@@ -70,7 +70,7 @@ class Device < ApplicationRecord
   end
 
   def mobile_type?
-    device_type.mogile_type?
+    device_type.mobile_type?
   end
 
   def logout_me

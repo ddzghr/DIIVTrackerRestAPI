@@ -4,12 +4,10 @@ module Api
   module V1
     class RolesController < ApplicationController
       before_action :set_role, only: %i[show update destroy]
-      skip_authorization_check
+      load_and_authorize_resource
 
       # GET /roles
       def index
-        @roles = Role.all
-
         render json: @roles
       end
 
@@ -41,6 +39,7 @@ module Api
       # DELETE /roles/1
       def destroy
         @role.destroy
+        render json: @role, status: :ok
       end
 
       private

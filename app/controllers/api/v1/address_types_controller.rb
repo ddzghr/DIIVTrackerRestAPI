@@ -4,12 +4,10 @@ module Api
   module V1
     class AddressTypesController < ApplicationController
       before_action :set_address_type, only: [:show, :update, :destroy]
-      skip_authorization_check
+      load_and_authorize_resource
 
       # GET /api/v1/address-types
       def index
-        @address_types = AddressType.all
-
         render json: @address_types
       end
 
@@ -40,6 +38,7 @@ module Api
       # DELETE /api/v1/address-types/1
       def destroy
         @address_type.destroy
+        render json: @address_type, status: :ok
       end
 
       private

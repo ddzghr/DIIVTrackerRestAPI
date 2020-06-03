@@ -47,7 +47,7 @@ Rails.application.routes.draw do
       resources :workflows
       resources :users, param: :uuid do
         resources :user_roles, param: :uuid, path: '/user-roles'
-        resources :devices, param: :uuid, only: [:index, :create] do
+        resources :devices, param: :uuid, only: [:index, :show, :create, :update] do
           get 'reset', on: :member
           resources :gps_locations, path: '/gps-locations', only: [:index, :create]
         end
@@ -97,6 +97,7 @@ Rails.application.routes.draw do
       resources :role_device_types, only: [:index, :show], path: 'roles-device-types'
       resources :statuses, only: [:index, :show]
       resources :workflows, only: [:index, :show]
+      resources :devices, param: :uuid, only: [:index, :show]
       resources :users, param: :uuid, only: [:index, :show] do
         resources :user_roles, param: :uuid, path: '/user-roles', only: [:index, :show]
       end

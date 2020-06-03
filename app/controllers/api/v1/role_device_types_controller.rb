@@ -4,12 +4,10 @@ module Api
   module V1
     class RoleDeviceTypesController < ApplicationController
       before_action :set_role_device_type, only: [:show, :update, :destroy]
-      skip_authorization_check
+      load_and_authorize_resource
 
       # GET /role_device_types
       def index
-        @role_device_types = RoleDeviceType.all
-
         render json: @role_device_types
       end
 
@@ -41,6 +39,7 @@ module Api
       # DELETE /role_device_types/1
       def destroy
         @role_device_type.destroy
+        render json: @role_device_type, status: :ok
       end
 
       private
@@ -52,7 +51,9 @@ module Api
 
       # Only allow a trusted parameter "white list" through.
       def role_device_type_params
-        params.require(:role_device_type).permit(:role_id, :device_type_id, :applicable)
+        params.require(:role_device_type).permit(:role_id,
+                                                 :device_type_id,
+                                                 :applicable)
       end
     end
   end

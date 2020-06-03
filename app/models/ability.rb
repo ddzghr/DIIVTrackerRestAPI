@@ -10,49 +10,70 @@ class Ability
 
     # plain users
     # read or update own user
-    can [:read, :update], User,
+    can %i[read update], User,
         id: user.id, user_active: true, user_locked: false, email_confirmed: true
     # read or update own address
-    can [:read, :update], Address,
+    can %i[read update], Address,
         [ addressable_id: user.id, addressable_type: 'User']
-    # read or update own roles
-    can [:read, :update], UserRole,
-        user_id: user.id
+    # read own roles
+    can %i[read], UserRole, user_id: user.id
+
+    # User can have multiple roles
+    if user.orderer?
+      can %i[read], Delivery
+    end
+
+    if user.supplier?
+      can %i[read create], Delivery
+      can %i[read create], Device, user_id: user.id
+    end
+
+    if user.courier?
+      can %i[read], Delivery
+      can %i[read create], Device, user_id: user.id
+    end
+
+    # users cannot touch domains
+    cannot :manage, AddressType
+    cannot :manage, Role
+    cannot :manage, DeviceType
+    cannot :manage, RoleDeviceType
+    cannot :manage, Status
+    cannot :manage, Workflow
+
     unless device.nil?
-      # list couriers
-      can [:list_couriers], User, user_active: true if device.desktop?
-      # list owners
-      can [:fetch_owner], User
+      # All devices
+      can :fetch_owner, User
+      can %i[read create], GpsLocation
+      can %i[read], Device, id: device.id
+
+      if device.desktop?
+        can [:list_couriers], User, user_active: true
+        can %i[read create], Delivery
+        can %i[read create cancel], DeliveryStatus
+      elsif device.mobile?
+        can :read, Delivery
+        can %i[read pickup accept reject deliver lost], DeliveryStatus
+      elsif device.web_server?
+        can %i[read accept store assign reject deliver lost], DeliveryStatus
+        can %i[read], Device, user_id: user.id
+      elsif device.internal_web_server? || device.internal_api_server?
+        # Domains
+        can :read, AddressType
+        can :read, Role
+        can :read, DeviceType
+        can :read, RoleDeviceType
+        can :read, Status
+        can :read, Workflow
+        # Others
+        can %i[read list_couriers], User
+      end
     end
 
     return unless user.admin?
     # admins
     can :manage, :all
 
-    # Define abilities for the passed in user here. For example:
-    #
-    #   user ||= User.new # guest user (not logged in)
-    #   if user.admin?
-    #     can :manage, :all
-    #   else
-    #     can :read, :all
-    #   end
-    #
-    # The first argument to `can` is the action you are giving the user
-    # permission to do.
-    # If you pass :manage it will apply to every action. Other common actions
-    # here are :read, :create, :update and :destroy.
-    #
-    # The second argument is the resource the user can perform the action on.
-    # If you pass :all it will apply to every resource. Otherwise pass a Ruby
-    # class of the resource.
-    #
-    # The third argument is an optional hash of conditions to further filter the
-    # objects.
-    # For example, here the user can only update published articles.
-    #
-    #   can :update, Article, :published => true
-    #
     # See the wiki for details:
     # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
   end
