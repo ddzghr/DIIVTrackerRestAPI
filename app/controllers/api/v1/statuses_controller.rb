@@ -4,12 +4,10 @@ module Api
   module V1
     class StatusesController < ApplicationController
       before_action :set_status, only: [:show, :update, :destroy]
-      skip_authorization_check
+      load_and_authorize_resource
 
       # GET /statuses
       def index
-        @statuses = Status.all
-
         render json: @statuses
       end
 
@@ -41,6 +39,7 @@ module Api
       # DELETE /statuses/1
       def destroy
         @status.destroy
+        render json: @status, status: :ok
       end
 
       private
