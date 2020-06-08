@@ -20,11 +20,11 @@ module Api
         render json: @devices
       end
 
-      # GET /devices/1
+      # GET /devices/:uuid
       def show
         authorize! :show, @device
         if @context == :client_context
-          render json: nil and return unless @device.user_id == @current_user.id
+          raise CanCan::AccessDenied unless @device.user_id == @current_user.id
         end
         render json: @device
       end
@@ -32,35 +32,35 @@ module Api
       # POST /devices
       def create
         @device = Device.new(device_params)
-        render json: jason_message('message', 'User can not have this type of device'), status: :unprocessable_entity and return unless can_have_device?(@device.user_id, @device.device_type_id)
+        render json: json_message('message', Message.unallowed_device), status: :unprocessable_entity and return unless can_have_device?(@device.user_id, @device.device_type_id)
         secret_token = SecureRandom.base58(24)
         @device.secret_token = secret_token
         @device.secret_token_confirmation = secret_token
         @device.device_confirmed = false # Force confirmation
         if @device.save
           DeviceMailer.with(device: @device).confirm_device.deliver_now
-          render json: jason_message('value', secret_token), status: :created
+          render json: json_message('value', secret_token), status: :created, location: context_url_generator(@device.uuid)
         else
           render json: @device.errors, status: :unprocessable_entity
         end
       end
 
-      # GET /users
+      # GET /devices/:uuid/confirm
       def confirm
-        render json: jason_message('message', 'Already confirmed'), status: :unprocessable_entity and return if @device.device_confirmed?
+        render json: json_message('message', Message.confirmed), status: :unprocessable_entity and return if @device.device_confirmed?
         if params[:device_token] == @device.confirm_token
           @device.device_confirmed = true
           if @device.save(validate: false)
-            render json: jason_message('message', 'Confirmed'), status: :ok
+            render json: json_message('message', Message.confirm), status: :ok
           else
             render json: @device.errors, status: :unprocessable_entity
           end
         else
-          render json: jason_message('message','Invalid token'), status: :unprocessable_entity
+          render json: json_message('message', Message.invalid_token), status: :unprocessable_entity
         end
       end
 
-      # GET /users
+      # GET /devices/:uuid/confirm
       def reset
         secret_token = SecureRandom.base58(24)
         @device.secret_token = secret_token
@@ -68,14 +68,15 @@ module Api
         @device.device_confirmed = false # Force confirmation
         if @device.save
           DeviceMailer.with(device: @device).confirm_device.deliver_now
-          render json: jason_message('value', secret_token), status: :ok
+          render json: json_message('value', secret_token), status: :ok
         else
           render json: @device.errors, status: :unprocessable_entity
         end
       end
 
-      # PATCH/PUT /devices/1
+      # PATCH/PUT /devices/:uuid
       def update
+        authorize! :update, @device
         @device.device_confirmed = false
         if @device.update(device_params)
           DeviceMailer.with(device: @device).confirm_device.deliver_now
@@ -85,8 +86,9 @@ module Api
         end
       end
 
-      # DELETE /devices/1
+      # DELETE /devices/:uuid
       def destroy
+        authorize! :destroy, @device
         @device.destroy
       end
 
@@ -98,15 +100,14 @@ module Api
 
       # Use callbacks to share common setup or constraints between actions.
       def set_device
-        @device ||= Device.find_by_uuid(params[:uuid])
-        render json: jason_message('message','Request cannot be processed'), status: :unprocessable_entity unless @device && @device.device_active?
+        @device = Device.find_by_uuid!(params[:uuid])
+        render json: json_message('message', Message.cannot_process), status: :unprocessable_entity unless @device && @device.device_active?
       end
 
       # Only allow a trusted parameter "white list" through.
       def device_params
         load_params = if @current_user.admin?
-                        params.require(:device).permit(:uuid,
-                                                       :secret_token,
+                        params.require(:device).permit(:secret_token,
                                                        :name,
                                                        :device_type_id,
                                                        :valid_from,
@@ -117,21 +118,21 @@ module Api
                                                        :device_locked,
                                                        :unlock_token)
                       else
-                        params.require(:device).permit(:uuid,
-                                                       :name,
+                        params.require(:device).permit(:name,
                                                        :device_type_id)
                       end
         # what is context
         if params[:user_uuid]
-          load_params[:user_id] = User.find_by_uuid(params[:user_uuid]).id
+          load_params[:user_id] = User.find_by_uuid!(params[:user_uuid]).id
         elsif params[:client_uuid]
-          load_params[:user_id] = User.find_by_uuid(params[:client_uuid]).id
+          load_params[:user_id] = User.find_by_uuid!(params[:client_uuid]).id
         elsif params[:device_uuid]
           load_params[:user_id] = @current_user.id
         end
         load_params.permit!
         load_params
       end
+
       def set_context
         # what is context
         @context = if params[:user_uuid]
@@ -144,6 +145,18 @@ module Api
                      :unknown_context
                    end
       end
+
+      def context_url_generator(uuid)
+        case @context
+        when :user_context
+          clients_client_user_device_url(uuid: uuid)
+        when :client_context
+          clients_client_device_url(uuid: uuid)
+        else
+          uuid
+        end
+      end
+
     end
   end
 end

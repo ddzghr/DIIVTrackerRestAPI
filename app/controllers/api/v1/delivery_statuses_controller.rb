@@ -445,11 +445,11 @@ module Api
                                                                :local_datetime,
                                                                :assigned_device_id)
 
-        load_params[:delivery_id] = Delivery.find_by_uuid(params[:delivery_uuid]).id if params[:delivery_uuid]
-        load_params[:delivery_id] = Delivery.find_by_uuid(params[:uuid]).id if params[:uuid]
-        load_params[:device_id] = Device.find_by_uuid(params[:device_uuid]).id if params[:device_uuid]
+        load_params[:delivery_id] = Delivery.find_by_uuid!(params[:delivery_uuid]).id if params[:delivery_uuid]
+        load_params[:delivery_id] = Delivery.find_by_uuid!(params[:uuid]).id if params[:uuid]
+        load_params[:device_id] = Device.find_by_uuid!(params[:device_uuid]).id if params[:device_uuid]
         if params[:delivery_status][:assigned_device_uuid]
-          load_params[:assigned_device_id] = Device.find_by_uuid(params[:delivery_status][:assigned_device_uuid]).id
+          load_params[:assigned_device_id] = Device.find_by_uuid!(params[:delivery_status][:assigned_device_uuid]).id
         end
         if params[:delivery_status][:last_location]
           load_params[:last_location] = params[:delivery_status][:last_location]

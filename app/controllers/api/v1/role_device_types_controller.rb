@@ -8,6 +8,13 @@ module Api
 
       # GET /role_device_types
       def index
+        # hide internal
+        @role_device_types = @role_device_types
+                             .joins(:role, :device_type)
+                             .where(roles: { internal_admin_type: false,
+                                             internal_application_type: false },
+                                    device_types: {internal_api_server_type: false,
+                                                   internal_web_server_type: false })
         render json: @role_device_types
       end
 
@@ -44,9 +51,20 @@ module Api
 
       private
 
+      def check_internal
+        unless (@role_device_type.device_type.internal_api_server_type == false && @role_device_type.device_type.internal_web_server_type == false) &&
+               (@role_device_type.role.internal_admin_type == false && @role_device_type.role.internal_application_type == false)
+          # Always hide internals
+          id = @role_device_type.id
+          @role_device_type = nil
+          raise ActiveRecord::RecordNotFound, "Couldn't find RoleDeviceType with 'id'=#{id}"
+        end
+      end
+
       # Use callbacks to share common setup or constraints between actions.
       def set_role_device_type
         @role_device_type = RoleDeviceType.find(params[:id])
+        check_internal
       end
 
       # Only allow a trusted parameter "white list" through.

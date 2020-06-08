@@ -27,7 +27,7 @@ module Api
           ds = DeliveryStatus.find(params[:delivery_status_id])
           @gps_location.locatable = ds
         elsif params[:device_uuid]
-            dev = Device.find_by_uuid(params[:device_uuid])
+            dev = Device.find_by_uuid!(params[:device_uuid])
             @gps_location.locatable = dev
             if dev.device_type.mobile_type
               upd_dev_statuses = true

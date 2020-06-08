@@ -3,16 +3,18 @@
 module Api
   module V1
     class RolesController < ApplicationController
-      before_action :set_role, only: %i[show update destroy]
+      prepend_before_action :set_role, only: %i[show update destroy]
       load_and_authorize_resource
 
       # GET /roles
       def index
+        @roles = @roles.where(internal_admin_type: false, internal_application_type: false) # Always hide admin roles
         render json: @roles
       end
 
       # GET /roles/1
       def show
+        # authorize! :show, @role
         render json: @role
       end
 
@@ -29,6 +31,7 @@ module Api
 
       # PATCH/PUT /roles/1
       def update
+        # authorize! :update, @role
         if @role.update(role_params)
           render json: @role
         else
@@ -38,6 +41,7 @@ module Api
 
       # DELETE /roles/1
       def destroy
+        # authorize! :destroy, @role
         @role.destroy
         render json: @role, status: :ok
       end
@@ -47,6 +51,16 @@ module Api
       # Use callbacks to share common setup or constraints between actions.
       def set_role
         @role = Role.find(params[:id])
+        check_admin_role
+      end
+
+      def check_admin_role
+        unless @role.internal_admin_type == false && @role.internal_application_type == false
+          # Always hide admin roles
+          id = @role.id
+          @role = nil
+          raise ActiveRecord::RecordNotFound, "Couldn't find Role with 'id'=#{id}"
+        end
       end
 
       # Only allow a trusted parameter "white list" through.

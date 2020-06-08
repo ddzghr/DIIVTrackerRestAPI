@@ -8,11 +8,13 @@ module Api
 
       # GET /device_types
       def index
+        @device_types = @device_types.where(internal_api_server_type: false, internal_web_server_type: false) # Always hide internal devices
         render json: @device_types
       end
 
       # GET /device_types/1
       def show
+        # authorize! :show, @device_type
         render json: @device_type
       end
 
@@ -28,6 +30,7 @@ module Api
 
       # PATCH/PUT /device_types/1
       def update
+        # authorize! :update, @device_type
         if @device_type.update(device_type_params)
           render json: @device_type
         else
@@ -37,15 +40,26 @@ module Api
 
       # DELETE /device_types/1
       def destroy
+        # authorize! :destroy, @device_type
         @device_type.destroy
         render json: @device_type, status: :ok
       end
 
       private
 
+      def check_internal_device
+        unless @device_type.internal_api_server_type == false && @device_type.internal_web_server_type == false
+          # Always hide admin roles
+          id = @device_type.id
+          @device_type = nil
+          raise ActiveRecord::RecordNotFound, "Couldn't find DeviceType with 'id'=#{id}"
+        end
+      end
+
       # Use callbacks to share common setup or constraints between actions.
       def set_device_type
         @device_type = DeviceType.find(params[:id])
+        check_internal_device
       end
 
       # Only allow a trusted parameter "white list" through.

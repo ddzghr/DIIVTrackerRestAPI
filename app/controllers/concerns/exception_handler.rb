@@ -13,9 +13,9 @@ module ExceptionHandler
     # Define custom handlers
     rescue_from ActiveRecord::RecordInvalid, with: :four_twenty_two
     rescue_from ActiveRecord::ValueTooLong, with: :four_twenty_two
+    #rescue_from ActiveRecord::RecordNotFound, with: :not_found
     rescue_from CanCan::AuthorizationNotPerformed, with: :cancan_five_zero_zero
     rescue_from CanCan::AccessDenied, with: :unauthorized_request
-    #rescue_from CanCan::AccessDenied, with: :not_found
 
     rescue_from ExceptionHandler::AuthenticationError, with: :unauthorized_request
     rescue_from ExceptionHandler::MissingToken, with: :four_twenty_two
@@ -23,8 +23,7 @@ module ExceptionHandler
     rescue_from ExceptionHandler::MissingPasswordChange, with: :four_twenty_two
 
     rescue_from ActiveRecord::RecordNotFound do |e|
-      #json_response({ message: e.message }, :not_found)
-      head :not_found
+      json_response({ message: e.message }, :not_found)
     end
 
   end

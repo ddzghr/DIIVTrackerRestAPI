@@ -3,7 +3,6 @@
 module Api
   module V1
     class StatusesController < ApplicationController
-      before_action :set_status, only: [:show, :update, :destroy]
       load_and_authorize_resource
 
       # GET /statuses
@@ -45,9 +44,10 @@ module Api
       private
 
       # Use callbacks to share common setup or constraints between actions.
-      def set_status
-        @status = Status.find(params[:id])
-      end
+      # not used when standard CanCanCan is used
+      # def set_status
+      #   @status = Status.find(params[:id])
+      # end
 
       # Only allow a trusted parameter "white list" through.
       def status_params

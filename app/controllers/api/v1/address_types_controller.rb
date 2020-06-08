@@ -3,7 +3,6 @@
 module Api
   module V1
     class AddressTypesController < ApplicationController
-      before_action :set_address_type, only: [:show, :update, :destroy]
       load_and_authorize_resource
 
       # GET /api/v1/address-types
@@ -44,9 +43,10 @@ module Api
       private
 
       # Use callbacks to share common setup or constraints between actions.
-      def set_address_type
-        @address_type = AddressType.find(params[:id])
-      end
+      # not used when standard CanCanCan is used
+      # def set_address_type
+      #   @address_type = AddressType.find(params[:id])
+      # end
 
       # Only allow a trusted parameter "white list" through.
       def address_type_params
