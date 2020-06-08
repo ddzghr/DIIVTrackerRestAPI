@@ -4,18 +4,26 @@ module Api
   module V1
     # Handles deliveries
     class DeliveriesController < ApplicationController
-      before_action :set_delivery, only: [:show, :update, :destroy]
+      prepend_before_action :set_context
+      prepend_before_action :set_delivery, only: [:show, :update, :destroy]
       skip_authorization_check
 
       # GET /deliveries
       def index
         @deliveries = Delivery.all
-
+        # TODO: Dovrši kontekst po svim akcijama
+        # if @context == :client_context
+        #   @deliveries = @deliveries.where(user_id: @current_user.id)
+        # elsif @context == :user_context
+        #   @deliveries = @deliveries.joins(:user).where(users: { uuid: params[:user_uuid] })
+        # end
         render json: @deliveries
       end
 
       # GET /deliveries/1
       def show
+        raise ActiveRecord::RecordNotFound if @delivery.nil?
+
         render json: @delivery
       end
 
@@ -81,9 +89,22 @@ module Api
 
       private
 
+      def set_context
+        # what is context
+        @context = if params[:user_uuid]
+                     :user_context
+                   elsif params[:client_uuid]
+                     :client_context
+                   elsif params[:device_uuid]
+                     :device_context
+                   else
+                     :unknown_context
+                   end
+      end
+
       # Use callbacks to share common setup or constraints between actions.
       def set_delivery
-        @delivery = Delivery.find_by_uuid(params[:uuid])
+        @delivery = Delivery.find_by_uuid!(params[:uuid])
       end
 
       # Only allow a trusted parameter "white list" through.
@@ -98,7 +119,7 @@ module Api
           usr = User.find_by_email(params[:orderer_email])
           load_params[:orderer_id] = usr.id if usr
         end
-        load_params[:courier_id] = User.find_by_uuid(params[:courier_uuid]).id if params[:courier_uuid]
+        load_params[:courier_id] = User.find_by_uuid!(params[:courier_uuid]).id if params[:courier_uuid]
         load_params[:current_address] = params[:current_address] if params[:current_address]
         load_params[:from_address] = params[:from_address] if params[:from_address]
         load_params[:to_address] = params[:to_address] if params[:to_address]

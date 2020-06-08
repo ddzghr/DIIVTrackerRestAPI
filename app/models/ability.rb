@@ -5,8 +5,15 @@ class Ability
 
   def initialize(user, device = nil)
     # Not logged in users
-    can :create, User
     return if user.nil?
+
+    # users cannot touch domains
+    cannot :manage, AddressType
+    cannot :manage, Role
+    cannot :manage, DeviceType
+    cannot :manage, RoleDeviceType
+    cannot :manage, Status
+    cannot :manage, Workflow
 
     # plain users
     # read or update own user
@@ -14,9 +21,9 @@ class Ability
         id: user.id, user_active: true, user_locked: false, email_confirmed: true
     # read or update own address
     can %i[read update], Address,
-        [ addressable_id: user.id, addressable_type: 'User']
-    # read own roles
-    can %i[read], UserRole, user_id: user.id
+        [addressable_id: user.id, addressable_type: 'User']
+    # read and create own roles
+    can %i[read create destroy], UserRole, user_id: user.id
 
     # User can have multiple roles
     if user.orderer?
@@ -32,14 +39,6 @@ class Ability
       can %i[read], Delivery
       can %i[read create], Device, user_id: user.id
     end
-
-    # users cannot touch domains
-    cannot :manage, AddressType
-    cannot :manage, Role
-    cannot :manage, DeviceType
-    cannot :manage, RoleDeviceType
-    cannot :manage, Status
-    cannot :manage, Workflow
 
     unless device.nil?
       # All devices
@@ -66,7 +65,7 @@ class Ability
         can :read, Status
         can :read, Workflow
         # Others
-        can %i[read list_couriers], User
+        can %i[read create list_couriers], User
       end
     end
 

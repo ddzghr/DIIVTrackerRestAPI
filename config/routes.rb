@@ -6,7 +6,6 @@ Rails.application.routes.draw do
   root to: 'hellos#index'
   scope module: 'api/v1', path: 'api/v1/free', as: 'free' do
     resources :deliveries, param: :uuid, only: [:show]
-    resource :user, path: 'signup', only: [:create]
     resources :users, param: :uuid, only: [] do
       get 'reset-my-credentials', on: :member, to: 'reset_my_credentials'
       get 'reset', param: :user_token, on: :member
@@ -23,7 +22,7 @@ Rails.application.routes.draw do
     resources :clients, param: :uuid, only: [] do
       post 'login', to: 'user_authentication#authenticate'
       post 'logout', to: 'user_authentication#logout'
-      resources :user_roles, param: :uuid, except: [:update, :destroy], path: 'user-roles'
+      resources :user_roles, param: :uuid, except: [:update], path: 'user-roles'
       resources :devices, param: :uuid, except: [:update, :destroy], path: 'devices' do
         get 'reset', on: :member
         resources :gps_locations, path: 'gps-locations', only: [:index, :create]
@@ -91,6 +90,7 @@ Rails.application.routes.draw do
       resources :gps_locations, path: 'gps-locations', only: [:create]
 
       # this is part for DIIVTracker WEB application
+      resource :user, path: 'signup', only: [:create]
       resources :address_types, only: [:index, :show], path: 'address-types'
       resources :roles, only: [:index, :show]
       resources :device_types, only: [:index, :show], path: 'device-types'

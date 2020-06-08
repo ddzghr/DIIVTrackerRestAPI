@@ -4,7 +4,7 @@ module Response
     render json: object, status: status
   end
 
-  def jason_message(name, value)
+  def json_message(name, value)
     ('{"' + name + '":"' + value + '"}')
   end
 end

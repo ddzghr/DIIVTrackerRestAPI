@@ -8,6 +8,9 @@ module Api
 
       # GET /workflows
       def index
+        @workflows = @workflows.joins(:device_type)
+                               .where(device_types: { internal_api_server_type: false,
+                                                      internal_web_server_type: false })
         render json: @workflows
       end
 
@@ -44,9 +47,19 @@ module Api
 
       private
 
+      def check_internal_device
+        unless @workflow.device_type.internal_api_server_type == false && @workflow.device_type.internal_web_server_type == false
+          # Always hide admin roles
+          id = @workflow.id
+          @workflow = nil
+          raise ActiveRecord::RecordNotFound, "Couldn't find Workflow with 'id'=#{id}"
+        end
+      end
+
       # Use callbacks to share common setup or constraints between actions.
       def set_workflow
         @workflow = Workflow.find(params[:id])
+        check_internal_device
       end
 
       # Only allow a trusted parameter "white list" through.
