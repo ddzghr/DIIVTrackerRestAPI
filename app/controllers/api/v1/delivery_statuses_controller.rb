@@ -3,8 +3,10 @@
 module Api
   module V1
     class DeliveryStatusesController < ApplicationController
-      before_action :set_delivery_status, only: %i[show update destroy]
-      skip_authorization_check
+      prepend_before_action :set_delivery_status, only: %i[show update destroy]
+      prepend_before_action :set_context
+      load_and_authorize_resource except: %i[pickup accept assign reject store deliver lost cancel]
+      authorize_resource only: %i[pickup accept assign reject store deliver lost cancel]
       # actions that require destination
       DESTINATION_ACTIONS = %i[assign accept pickup].freeze
       # actions that require destination fallbacks
@@ -17,9 +19,28 @@ module Api
       CURRENT_ADDRESS_TO = %i[deliver].freeze
 
       # GET /delivery_statuses
+      UPIT = '? in (deliveries.orderer_id, deliveries.courier_id, deliveries.supplier_id)'
       def index
-        @delivery_statuses = DeliveryStatus.all
-
+        @delivery_statuses = case @context
+                             when :delivery_context
+                               @delivery_statuses.joins(:delivery)
+                                                 .where(deliveries: { uuid: params[:uuid]})
+                             when :client_context
+                               @delivery_statuses.joins(:delivery)
+                                                 .where(deliveries: { uuid: params[:delivery_uuid]})
+                                                 .where(UPIT, User.find_by_uuid!(params[:client_uuid]).id)
+                             when :user_context
+                               @delivery_statuses.joins(:delivery)
+                                                 .where(deliveries: { uuid: params[:delivery_uuid]})
+                                                 .where(UPIT, User.find_by_uuid!(params[:user_uuid]).id)
+                             when :device_context
+                               @delivery_statuses.joins(:delivery)
+                                                 .where(deliveries: { uuid: params[:delivery_uuid]})
+                                                 .where(UPIT, Device.find_by_uuid!(params[:device_uuid]).user_id)
+                             else
+                               DeliveryStatus.none
+                             end
+        response.set_header('X-Total-Count', @delivery_statuses.count) if @delivery_statuses
         render json: @delivery_statuses
       end
 
@@ -31,7 +52,6 @@ module Api
       # POST /delivery_statuses
       def pickup
         all_params = delivery_status_params
-        #render json: all_params, status: :ok and return
         delivery = Delivery.find(all_params[:delivery_id])
         device = Device.find(all_params[:device_id])
         status = nil
@@ -64,7 +84,6 @@ module Api
       # POST /delivery_statuses
       def accept
         all_params = delivery_status_params
-        # render json: all_params, status: :ok
         delivery = Delivery.find(all_params[:delivery_id])
         device = Device.find(all_params[:device_id])
         status = nil
@@ -100,7 +119,6 @@ module Api
       # POST /delivery_statuses
       def assign
         all_params = delivery_status_params
-        # render json: all_params, status: :ok
         delivery = Delivery.find(all_params[:delivery_id])
         device = Device.find(all_params[:device_id])
         assign_device = Device.find(all_params[:assigned_device_id])
@@ -135,7 +153,6 @@ module Api
       # POST /delivery_statuses
       def reject
         all_params = delivery_status_params
-        # render json: all_params, status: :ok
         delivery = Delivery.find(all_params[:delivery_id])
         device = Device.find(all_params[:device_id])
         status = nil
@@ -171,7 +188,6 @@ module Api
       # POST /delivery_statuses
       def store
         all_params = delivery_status_params
-        # render json: all_params, status: :ok
         delivery = Delivery.find(all_params[:delivery_id])
         device = Device.find(all_params[:device_id])
         status = nil
@@ -204,7 +220,6 @@ module Api
       # POST /delivery_statuses
       def deliver
         all_params = delivery_status_params
-        # render json: all_params, status: :ok
         delivery = Delivery.find(all_params[:delivery_id])
         device = Device.find(all_params[:device_id])
         status = nil
@@ -237,7 +252,6 @@ module Api
       # POST /delivery_statuses
       def lost
         all_params = delivery_status_params
-        # render json: all_params, status: :ok
         delivery = Delivery.find(all_params[:delivery_id])
         device = Device.find(all_params[:device_id])
         status = nil
@@ -270,7 +284,6 @@ module Api
       # POST /delivery_statuses
       def cancel
         all_params = delivery_status_params
-        # render json: all_params, status: :ok
         delivery = Delivery.find(all_params[:delivery_id])
         device = Device.find(all_params[:device_id])
         status = nil
@@ -327,6 +340,8 @@ module Api
 
       private
 
+
+
       def persist_all?
         saved = false
         @delivery_status.transaction do
@@ -376,7 +391,7 @@ module Api
               @delivery_status.destination.gps_location = delivery.from_address.address.gps_location.dup
             end
           elsif DESTINATION_TO.include?(params[:action].parameterize.underscore.to_sym) && !delivery.to_address.nil? && !delivery.to_address.address.nil?
-            @delivery_status.destination =  delivery.to_address.address.dup
+            @delivery_status.destination = delivery.to_address.address.dup
             unless delivery.to_address.address.gps_location.nil?
               @delivery_status.destination.gps_location = delivery.to_address.address.gps_location.dup
             end
@@ -431,9 +446,44 @@ module Api
         delivery_status_create_error
       end
 
+      # set context
+      def set_context
+        # what is context
+        @context = if params[:uuid] && params[:device_uuid]
+                     :delivery_context
+                   elsif params[:delivery_uuid] && params[:user_uuid]
+                     :user_context
+                   elsif params[:delivery_uuid] && params[:client_uuid]
+                     :client_context
+                   elsif params[:delivery_uuid] && params[:device_uuid]
+                     :device_context
+                   elsif params[:client_uuid]
+                     :short_context
+                   else
+                     :unknown_context
+                   end
+      end
+
       # Use callbacks to share common setup or constraints between actions.
       def set_delivery_status
         @delivery_status = DeliveryStatus.find(params[:id])
+        if @context == :delivery_context
+          raise CanCan::AccessDenied unless @delivery_status.delivery.uuid == params[:uuid]
+        elsif @context != :short_context
+          raise CanCan::AccessDenied unless @delivery_status.delivery.uuid == params[:delivery_uuid]
+        end
+        check_set = Set[@delivery_status.delivery.orderer_id, @delivery_status.delivery.courier_id, @delivery_status.delivery.supplier_id]
+        if @context == :short_context
+          raise CanCan::AccessDenied unless check_set.include?(User.find_by_uuid!(params[:client_uuid]).id)
+        elsif @context == :client_context
+          raise CanCan::AccessDenied unless check_set.include?(User.find_by_uuid!(params[:client_uuid]).id) 
+        elsif @context == :user_context
+          raise CanCan::AccessDenied unless check_set.include?(User.find_by_uuid!(params[:user_uuid]).id)
+        elsif @context == :device_context || @context == :short_context
+          raise CanCan::AccessDenied unless check_set.include?(Device.find_by_uuid!(params[:device_uuid]).user_id)
+        else
+          raise CanCan::AccessDenied
+        end
       end
 
       # Only allow a trusted parameter "white list" through.
