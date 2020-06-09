@@ -3,8 +3,8 @@
 module Api
   module V1
     class DevicesController < ApplicationController
-      prepend_before_action :set_context
       prepend_before_action :set_device, only: %i[show confirm reset update destroy]
+      prepend_before_action :set_context
       skip_before_action :authorize_request, only: %i[confirm reset]
       skip_authorization_check only: %i[confirm reset]
       load_and_authorize_resource except: %i[confirm reset]
@@ -12,20 +12,23 @@ module Api
 
       # GET /devices
       def index
-        if @context == :client_context
-          @devices = @devices.where(user_id: @current_user.id)
-        elsif @context == :user_context
+        case @context
+        when :client_context
+          @devices = @devices.joins(:user).where(users: { uuid: params[:client_uuid] })
+        when :user_context
           @devices = @devices.joins(:user).where(users: { uuid: params[:user_uuid] })
+        when :device_context
+          @devices = @devices.where(uuid: params[:device_uuid]) unless @current_device.web_server? # use ability
+        else
+          @devices = Device.none
         end
+        response.set_header('X-Total-Count', @devices.count) if @devices
         render json: @devices
       end
 
       # GET /devices/:uuid
       def show
         authorize! :show, @device
-        if @context == :client_context
-          raise CanCan::AccessDenied unless @device.user_id == @current_user.id
-        end
         render json: @device
       end
 
@@ -101,6 +104,15 @@ module Api
       # Use callbacks to share common setup or constraints between actions.
       def set_device
         @device = Device.find_by_uuid!(params[:uuid])
+        if @context == :client_context
+          raise CanCan::AccessDenied unless @device.user_id == User.find_by_uuid!(params[:client_uuid]).id
+        elsif @context == :user_context
+          raise CanCan::AccessDenied unless @device.user_id == User.find_by_uuid!(params[:user_uuid]).id
+        elsif @context == :device_context
+          raise CanCan::AccessDenied unless @device.user_id == Device.find_by_uuid!(params[:device_uuid]).user_id
+        else
+          raise CanCan::AccessDenied
+        end
         render json: json_message('message', Message.cannot_process), status: :unprocessable_entity unless @device && @device.device_active?
       end
 

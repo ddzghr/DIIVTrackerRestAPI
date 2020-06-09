@@ -28,16 +28,19 @@ class Ability
     # User can have multiple roles
     if user.orderer?
       can %i[read], Delivery
+      can %i[read], DeliveryStatus
     end
 
     if user.supplier?
       can %i[read create], Delivery
       can %i[read create], Device, user_id: user.id
+      can %i[read], DeliveryStatus
     end
 
     if user.courier?
       can %i[read], Delivery
       can %i[read create], Device, user_id: user.id
+      can %i[read], DeliveryStatus
     end
 
     unless device.nil?

@@ -8,6 +8,7 @@ module Api
 
       # GET /gps_locations
       def index
+        # TODO: dovrši sve endpointe s kontekstom
         @gps_locations = GpsLocation.all
 
         render json: @gps_locations

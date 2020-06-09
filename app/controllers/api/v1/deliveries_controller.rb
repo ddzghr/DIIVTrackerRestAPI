@@ -4,26 +4,31 @@ module Api
   module V1
     # Handles deliveries
     class DeliveriesController < ApplicationController
-      prepend_before_action :set_context
       prepend_before_action :set_delivery, only: [:show, :update, :destroy]
-      skip_authorization_check
+      prepend_before_action :set_context
+      load_and_authorize_resource
 
       # GET /deliveries
+      UPIT = '? in (deliveries.orderer_id, deliveries.courier_id, deliveries.supplier_id)'
+
       def index
-        @deliveries = Delivery.all
-        # TODO: Dovrši kontekst po svim akcijama
-        # if @context == :client_context
-        #   @deliveries = @deliveries.where(user_id: @current_user.id)
-        # elsif @context == :user_context
-        #   @deliveries = @deliveries.joins(:user).where(users: { uuid: params[:user_uuid] })
-        # end
+        @deliveries = case @context
+                      when :client_context
+                        @deliveries.where(UPIT, User.find_by_uuid!(params[:client_uuid]).id)
+                      when :user_context
+                        @deliveries.where(UPIT, User.find_by_uuid!(params[:user_uuid]).id)
+                      when :device_context
+                        @deliveries.where(UPIT, Device.find_by_uuid!(params[:device_uuid]).user_id)
+                      else
+                        Delivery.none
+                      end
+        response.set_header('X-Total-Count', @deliveries.count) if @deliveries
         render json: @deliveries
       end
 
-      # GET /deliveries/1
+      # GET /deliveries/:uuid
       def show
-        raise ActiveRecord::RecordNotFound if @delivery.nil?
-
+        authorize! :show, @delivery
         render json: @delivery
       end
 
@@ -66,15 +71,9 @@ module Api
         end
       end
 
-      # def pickup
-      #   controller_you_want = DeliveryStatusesController.new
-      #   controller_you_want.request = request
-      #   controller_you_want.response = response
-      #   render json: controller_you_want.process(:pickup)
-      # end
-
-      # PATCH/PUT /deliveries/1
+      # PATCH/PUT /deliveries/:uuid
       def update
+        authorize! :update, @delivery
         if @delivery.update(delivery_params)
           render json: @delivery
         else
@@ -82,9 +81,11 @@ module Api
         end
       end
 
-      # DELETE /deliveries/1
+      # DELETE /deliveries/:uuid
       def destroy
+        authorize! :destroy, @delivery
         @delivery.destroy
+        render json: @delivery
       end
 
       private
@@ -105,6 +106,16 @@ module Api
       # Use callbacks to share common setup or constraints between actions.
       def set_delivery
         @delivery = Delivery.find_by_uuid!(params[:uuid])
+        check_set = Set[@delivery.orderer_id, @delivery.courier_id, @delivery.supplier_id]
+        if @context == :client_context
+          raise CanCan::AccessDenied unless check_set.include?(User.find_by_uuid!(params[:client_uuid]).id)
+        elsif @context == :user_context
+          raise CanCan::AccessDenied unless check_set.include?(User.find_by_uuid!(params[:user_uuid]).id)
+        elsif @context == :device_context
+          raise CanCan::AccessDenied unless check_set.include?(Device.find_by_uuid!(params[:device_uuid]).user_id)
+        else
+          raise CanCan::AccessDenied
+        end
       end
 
       # Only allow a trusted parameter "white list" through.
