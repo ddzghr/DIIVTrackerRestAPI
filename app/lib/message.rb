@@ -12,6 +12,10 @@ class Message
     'Invalid token.'
   end
 
+  def self.invalid_context
+    'Invalid context'
+  end
+
   def self.missing_token
     'Missing token.'
   end
@@ -50,6 +54,14 @@ class Message
 
   def self.unallowed_device
     'User can not have this type of device.'
+  end
+
+  def self.unsupported_action
+    'Unsupported action.'
+  end
+
+  def self.not_last
+    'This action can be performed only on last entry.'
   end
 
 end

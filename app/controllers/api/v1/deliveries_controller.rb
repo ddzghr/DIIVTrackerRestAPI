@@ -5,14 +5,15 @@ module Api
     # Handles deliveries
     class DeliveriesController < ApplicationController
       prepend_before_action :set_delivery, only: [:show, :update, :destroy]
-      prepend_before_action :set_context
-      load_and_authorize_resource
+      prepend_before_action :prepare_action_context
+      load_and_authorize_resource except: :create
+      authorize_resource only: :create
 
       # GET /deliveries
       UPIT = '? in (deliveries.orderer_id, deliveries.courier_id, deliveries.supplier_id)'
 
       def index
-        @deliveries = case @context
+        @deliveries = case @action_context
                       when :client_context
                         @deliveries.where(UPIT, User.find_by_uuid!(params[:client_uuid]).id)
                       when :user_context
@@ -35,7 +36,6 @@ module Api
       # POST /deliveries
       def create
         all_params = delivery_params
-
         @delivery = Delivery.new(all_params.except(:current_address, :from_address, :to_address, :current_status, :contact))
         acur = Address.new(all_params[:current_address].except(:gps_location)) if all_params[:current_address]
         acur.gps_location = GpsLocation.new(all_params[:current_address][:gps_location]) if all_params[:current_address][:gps_location]
@@ -90,28 +90,28 @@ module Api
 
       private
 
-      def set_context
+      def prepare_action_context
         # what is context
-        @context = if params[:user_uuid]
-                     :user_context
-                   elsif params[:client_uuid]
-                     :client_context
-                   elsif params[:device_uuid]
-                     :device_context
-                   else
-                     :unknown_context
-                   end
+        @action_context = if params[:user_uuid]
+                            :user_context
+                          elsif params[:client_uuid]
+                            :client_context
+                          elsif params[:device_uuid]
+                            :device_context
+                          else
+                            :unknown_context
+                          end
       end
 
       # Use callbacks to share common setup or constraints between actions.
       def set_delivery
         @delivery = Delivery.find_by_uuid!(params[:uuid])
         check_set = Set[@delivery.orderer_id, @delivery.courier_id, @delivery.supplier_id]
-        if @context == :client_context
+        if @action_context == :client_context
           raise CanCan::AccessDenied unless check_set.include?(User.find_by_uuid!(params[:client_uuid]).id)
-        elsif @context == :user_context
+        elsif @action_context == :user_context
           raise CanCan::AccessDenied unless check_set.include?(User.find_by_uuid!(params[:user_uuid]).id)
-        elsif @context == :device_context
+        elsif @action_context == :device_context
           raise CanCan::AccessDenied unless check_set.include?(Device.find_by_uuid!(params[:device_uuid]).user_id)
         else
           raise CanCan::AccessDenied

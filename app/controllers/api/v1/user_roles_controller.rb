@@ -102,6 +102,13 @@ module Api
       # Use callbacks to share common setup or constraints between actions.
       def set_user_role
         @user_role = UserRole.find_by_uuid!(params[:uuid])
+        if params[:user_uuid]
+          raise CanCan::AccessDenied unless @user_role.user_id == User.find_by_uuid!(params[:user_uuid]).id
+
+        elsif params[:client_uuid]
+          raise CanCan::AccessDenied unless @user_role.user_id == User.find_by_uuid!(params[:client_uuid]).id
+
+        end
       end
 
       # Only allow a trusted parameter "white list" through.
