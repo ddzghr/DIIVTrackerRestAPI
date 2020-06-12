@@ -34,13 +34,15 @@ class Ability
     if user.supplier?
       can %i[read create], Delivery
       can %i[read create], Device, user_id: user.id
-      can %i[read], DeliveryStatus
+      can %i[read create cancel], DeliveryStatus
+      can %i[read], GpsLocation
     end
 
     if user.courier?
       can %i[read], Delivery
       can %i[read create], Device, user_id: user.id
       can %i[read], DeliveryStatus
+      can %i[read], GpsLocation
     end
 
     unless device.nil?

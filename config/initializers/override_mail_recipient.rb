@@ -3,7 +3,7 @@
 if Rails.env.development? or Rails.env.test?
   class OverrideMailRecipient
     def self.delivering_email(mail)
-      mail.to = 'pero@ddhome.local'
+      mail.to = 'ddzghr@gmail.com'
     end
   end
   ActionMailer::Base.register_interceptor(OverrideMailRecipient)

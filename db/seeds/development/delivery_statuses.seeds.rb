@@ -1,5 +1,5 @@
 # ruby encoding: utf-8
-after :statuses, :device_types, :devices, :deliveries do
+after :statuses, :device_types, "development:devices", "development:deliveries" do
   ns = Status.find_by_new_type_status(true).id
   dev = Device.find_by_device_type_id(DeviceType.find_by_code('CLIDESKTOP').id).id
   Delivery.all.each do |d|

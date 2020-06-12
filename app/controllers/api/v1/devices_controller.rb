@@ -4,15 +4,16 @@ module Api
   module V1
     class DevicesController < ApplicationController
       prepend_before_action :set_device, only: %i[show confirm reset update destroy]
-      prepend_before_action :set_context
+      prepend_before_action :prepare_action_context
       skip_before_action :authorize_request, only: %i[confirm reset]
       skip_authorization_check only: %i[confirm reset]
-      load_and_authorize_resource except: %i[confirm reset]
+      load_and_authorize_resource except: %i[create confirm reset]
+      authorize_resource only: :create
       # authorize_resource only: %i[]
 
       # GET /devices
       def index
-        case @context
+        case @action_context
         when :client_context
           @devices = @devices.joins(:user).where(users: { uuid: params[:client_uuid] })
         when :user_context
@@ -93,6 +94,7 @@ module Api
       def destroy
         authorize! :destroy, @device
         @device.destroy
+        render json: @device
       end
 
       private
@@ -104,11 +106,11 @@ module Api
       # Use callbacks to share common setup or constraints between actions.
       def set_device
         @device = Device.find_by_uuid!(params[:uuid])
-        if @context == :client_context
+        if @action_context == :client_context
           raise CanCan::AccessDenied unless @device.user_id == User.find_by_uuid!(params[:client_uuid]).id
-        elsif @context == :user_context
+        elsif @action_context == :user_context
           raise CanCan::AccessDenied unless @device.user_id == User.find_by_uuid!(params[:user_uuid]).id
-        elsif @context == :device_context
+        elsif @action_context == :device_context
           raise CanCan::AccessDenied unless @device.user_id == Device.find_by_uuid!(params[:device_uuid]).user_id
         else
           raise CanCan::AccessDenied
@@ -145,21 +147,21 @@ module Api
         load_params
       end
 
-      def set_context
+      def prepare_action_context
         # what is context
-        @context = if params[:user_uuid]
-                     :user_context
-                   elsif params[:client_uuid]
-                     :client_context
-                   elsif params[:device_uuid]
-                     :device_context
-                   else
-                     :unknown_context
-                   end
+        @action_context = if params[:user_uuid]
+                            :user_context
+                          elsif params[:client_uuid]
+                            :client_context
+                          elsif params[:device_uuid]
+                            :device_context
+                          else
+                            :unknown_context
+                          end
       end
 
       def context_url_generator(uuid)
-        case @context
+        case @action_context
         when :user_context
           clients_client_user_device_url(uuid: uuid)
         when :client_context

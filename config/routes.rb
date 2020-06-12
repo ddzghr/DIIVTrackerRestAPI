@@ -35,7 +35,6 @@ Rails.application.routes.draw do
       resources :delivery_statuses, path: 'delivery-statuses', except: [:index, :create, :update, :destroy] do
         resources :gps_locations, path: 'gps-locations', only: [:index, :create]
       end
-      resources :gps_locations, path: 'gps-locations', except: [:index, :create, :update, :destroy]
 
       # This is Admin part
       resources :address_types, path: '/address-types'

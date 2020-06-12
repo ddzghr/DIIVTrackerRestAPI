@@ -1,6 +1,6 @@
 # ruby encoding: utf-8
 require 'faker'
-after :users, :address_types do
+after "development:users", :address_types do
   # delivery for non registered user
   fatid = AddressType.find_by_code('FROMADDRES').id
   catid = AddressType.find_by_code('CURRENTADD').id

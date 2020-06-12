@@ -4,9 +4,9 @@ module Api
   module V1
     class DeliveryStatusesController < ApplicationController
       prepend_before_action :set_delivery_status, only: %i[show update destroy]
-      prepend_before_action :set_context
-      load_and_authorize_resource except: %i[pickup accept assign reject store deliver lost cancel]
-      authorize_resource only: %i[pickup accept assign reject store deliver lost cancel]
+      prepend_before_action :prepare_action_context
+      load_and_authorize_resource except: %i[create pickup accept assign reject store deliver lost cancel]
+      authorize_resource only: %i[create pickup accept assign reject store deliver lost cancel]
       # actions that require destination
       DESTINATION_ACTIONS = %i[assign accept pickup].freeze
       # actions that require destination fallbacks
@@ -21,7 +21,7 @@ module Api
       # GET /delivery_statuses
       UPIT = '? in (deliveries.orderer_id, deliveries.courier_id, deliveries.supplier_id)'
       def index
-        @delivery_statuses = case @context
+        @delivery_statuses = case @action_context
                              when :delivery_context
                                @delivery_statuses.joins(:delivery)
                                                  .where(deliveries: { uuid: params[:uuid]})
@@ -315,9 +315,29 @@ module Api
 
       # POST /delivery_statuses
       def create
-        @delivery_status = DeliveryStatus.new(delivery_status_params)
+        all_params = delivery_status_params
+        delivery = Delivery.find(all_params[:delivery_id])
+        device = Device.find(all_params[:device_id])
+        status = nil
+        unless delivery.current_status.nil? || delivery.current_status.status.nil?
+          workflow = Workflow.joins(:new_status)
+                             .joins(:old_status)
+                             .where(device_type_id: device.device_type.id,
+                                    old_status_id: delivery.current_status.status.id,
+                                    new_status_id: all_params[:status_id])
+                             .first
+          status = workflow.new_status unless workflow.nil?
+        end
+        render json: 'Invalid workflow on create', status: :unprocessable_entity and return if status.nil?
 
-        if @delivery_status.save
+        delivery_status_create_error = create_delivery_status?(delivery, status, all_params, device.id, nil)
+        if delivery_status_create_error
+          render json: 'Missing destination on create', status: :unprocessable_entity and return
+        end
+
+        saved = persist_all?
+
+        if saved
           render json: @delivery_status, status: :created #, location: @delivery_status
         else
           render json: @delivery_status.errors, status: :unprocessable_entity
@@ -326,6 +346,7 @@ module Api
 
       # PATCH/PUT /delivery_statuses/1
       def update
+        authorize! :update, @delivery_status
         if @delivery_status.update(delivery_status_params)
           render json: @delivery_status
         else
@@ -335,12 +356,14 @@ module Api
 
       # DELETE /delivery_statuses/1
       def destroy
+        authorize! :destroy, @delivery_status
+        raise(ExceptionHandler::Unsupported, Message.not_last) unless @delivery_status.delivery.current_status.id == @delivery_status.id
+
         @delivery_status.destroy
+        render json: @delivery_status
       end
 
       private
-
-
 
       def persist_all?
         saved = false
@@ -447,39 +470,39 @@ module Api
       end
 
       # set context
-      def set_context
+      def prepare_action_context
         # what is context
-        @context = if params[:uuid] && params[:device_uuid]
-                     :delivery_context
-                   elsif params[:delivery_uuid] && params[:user_uuid]
-                     :user_context
-                   elsif params[:delivery_uuid] && params[:client_uuid]
-                     :client_context
-                   elsif params[:delivery_uuid] && params[:device_uuid]
-                     :device_context
-                   elsif params[:client_uuid]
-                     :short_context
-                   else
-                     :unknown_context
-                   end
+        @action_context = if params[:uuid] && params[:device_uuid]
+                            :delivery_context
+                          elsif params[:delivery_uuid] && params[:user_uuid]
+                            :user_context
+                          elsif params[:delivery_uuid] && params[:client_uuid]
+                            :client_context
+                          elsif params[:delivery_uuid] && params[:device_uuid]
+                            :device_context
+                          elsif params[:client_uuid]
+                            :short_context
+                          else
+                            :unknown_context
+                          end
       end
 
       # Use callbacks to share common setup or constraints between actions.
       def set_delivery_status
         @delivery_status = DeliveryStatus.find(params[:id])
-        if @context == :delivery_context
+        if @action_context == :delivery_context
           raise CanCan::AccessDenied unless @delivery_status.delivery.uuid == params[:uuid]
-        elsif @context != :short_context
+        elsif @action_context != :short_context
           raise CanCan::AccessDenied unless @delivery_status.delivery.uuid == params[:delivery_uuid]
         end
         check_set = Set[@delivery_status.delivery.orderer_id, @delivery_status.delivery.courier_id, @delivery_status.delivery.supplier_id]
-        if @context == :short_context
+        if @action_context == :short_context
           raise CanCan::AccessDenied unless check_set.include?(User.find_by_uuid!(params[:client_uuid]).id)
-        elsif @context == :client_context
+        elsif @action_context == :client_context
           raise CanCan::AccessDenied unless check_set.include?(User.find_by_uuid!(params[:client_uuid]).id) 
-        elsif @context == :user_context
+        elsif @action_context == :user_context
           raise CanCan::AccessDenied unless check_set.include?(User.find_by_uuid!(params[:user_uuid]).id)
-        elsif @context == :device_context || @context == :short_context
+        elsif @action_context == :device_context || @action_context == :short_context
           raise CanCan::AccessDenied unless check_set.include?(Device.find_by_uuid!(params[:device_uuid]).user_id)
         else
           raise CanCan::AccessDenied
@@ -488,16 +511,27 @@ module Api
 
       # Only allow a trusted parameter "white list" through.
       def delivery_status_params
-        load_params = params.require(:delivery_status).permit( :id,
-                                                               :delivery_id,
-                                                               :status_id,
-                                                               :device_id,
-                                                               :local_datetime,
-                                                               :assigned_device_id)
-
+        load_params = if params[:action] == 'create'
+                        params.require(:delivery_status)
+                              .permit(:id,
+                                      :delivery_id,
+                                      :status_id,
+                                      :device_id,
+                                      :local_datetime,
+                                      :assigned_device_id)
+                      elsif params[:action] == 'update'
+                        params.require(:delivery_status)
+                              .permit(:local_datetime,
+                                      :assigned_device_id)
+                      else
+                        raise(ExceptionHandler::Unsupported, Message.unsupported_action)
+                      end
         load_params[:delivery_id] = Delivery.find_by_uuid!(params[:delivery_uuid]).id if params[:delivery_uuid]
         load_params[:delivery_id] = Delivery.find_by_uuid!(params[:uuid]).id if params[:uuid]
         load_params[:device_id] = Device.find_by_uuid!(params[:device_uuid]).id if params[:device_uuid]
+        if params[:delivery_status][:status] && params[:delivery_status][:status][:code]
+          load_params[:status_id] = Status.find_by_code!(params[:delivery_status][:status][:code]).id
+        end
         if params[:delivery_status][:assigned_device_uuid]
           load_params[:assigned_device_id] = Device.find_by_uuid!(params[:delivery_status][:assigned_device_uuid]).id
         end

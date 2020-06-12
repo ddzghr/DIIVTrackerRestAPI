@@ -1,4 +1,4 @@
-after :users, :roles do
+after "development:users", :roles do
   UserRole.create(user_id: User.find_by_email('admin@diiv.local').id,
                   role_id: Role.find_by_code('APIMASTER').id)
 

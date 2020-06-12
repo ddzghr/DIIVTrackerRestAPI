@@ -1,6 +1,6 @@
 # ruby encoding: utf-8
 require 'faker'
-after :delivery_statuses, :addresses do
+after "development:delivery_statuses", "development:addresses" do
   DeliveryStatus.all.each do |ds|
     ds.update!(gps_locations: [] << GpsLocation.new(gps_latitude: Faker::Address.latitude, gps_longitude: Faker::Address.longitude))
   end

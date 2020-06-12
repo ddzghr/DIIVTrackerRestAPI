@@ -1,4 +1,4 @@
-after :users, :device_types do
+after "development:users", :device_types do
   Device.create(name: 'DIIVTrackerRestAPI',
                  secret_token: '6fLzBB1ApfJqPorhsUDG8VXG',
                  secret_token_confirmation: '6fLzBB1ApfJqPorhsUDG8VXG',
