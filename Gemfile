@@ -8,7 +8,7 @@ gem 'rails', '~> 5.2.4', '>= 5.2.4.2'
 # Use mysql as the database for Active Record
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
 # Use Puma as the app server
-gem 'puma', '~> 3.11'
+gem 'puma', '~> 4.3'
 #gem "passenger", ">= 5.0.25", require: "phusion_passenger/rack_handler"
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
